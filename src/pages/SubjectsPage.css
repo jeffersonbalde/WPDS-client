@@ -1,0 +1,48 @@
+.wp-subj button.wp-flat__stat {
+  appearance: none;
+  -webkit-appearance: none;
+  font: inherit;
+  color: inherit;
+  text-align: left;
+  width: 100%;
+  cursor: pointer;
+  background: #fff;
+  border: 1px solid #dee2e6;
+  border-left: 4px solid #6c757d;
+}
+
+.wp-subj button.wp-flat__stat--blue {
+  border-left-color: #1036c9;
+}
+
+.wp-subj button.wp-flat__stat--teal {
+  border-left-color: #0d9488;
+}
+
+.wp-subj button.wp-flat__stat:focus-visible {
+  outline: 2px solid #1036c9;
+  outline-offset: 2px;
+}
+
+.wp-subj .wp-flat__stat.is-selected {
+  border-color: #1036c9;
+  box-shadow: 0 0 0 2px rgba(16, 54, 201, 0.16);
+}
+
+.wp-subj .wp-flat__btn--danger {
+  background: #dc3545;
+  border-color: #dc3545;
+  color: #fff;
+}
+
+.wp-subj .wp-flat__btn--danger:hover:not(:disabled) {
+  background: #bb2d3b;
+  border-color: #b02a37;
+  color: #fff;
+}
+
+/* Keep catalog table columns uniform with Students / Programs */
+.wp-subj .wp-flat__table tbody td {
+  font-size: 0.875rem;
+  font-weight: 400;
+}

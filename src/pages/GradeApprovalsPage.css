@@ -1,0 +1,110 @@
+.wp-grade-approvals__header {
+  margin-bottom: 1rem;
+}
+
+.wp-grade-approvals__title {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #1e293b;
+}
+
+.wp-grade-approvals__sub {
+  margin: 0.4rem 0 0;
+  font-size: 0.9rem;
+  color: #64748b;
+  max-width: 40rem;
+  line-height: 1.45;
+}
+
+.wp-grade-approvals__placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 0.5rem;
+  min-height: 14rem;
+  padding: 2.5rem 1.5rem;
+  background: #fff;
+  border: 1px solid #dee2e6;
+  border-left: 4px solid #1036c9;
+  border-radius: 0.25rem;
+}
+
+.wp-grade-approvals__placeholder-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 3rem;
+  height: 3rem;
+  margin-bottom: 0.35rem;
+  color: #1036c9;
+  font-size: 1.65rem;
+}
+
+.wp-grade-approvals__placeholder-title {
+  margin: 0;
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #1e293b;
+}
+
+.wp-grade-approvals__placeholder-text {
+  margin: 0;
+  max-width: 22rem;
+  font-size: 0.9rem;
+  color: #64748b;
+  line-height: 1.5;
+}
+
+.wp-grade-approvals__message {
+  margin: 0 0 0.75rem;
+  font-size: 0.875rem;
+  color: #15803d;
+}
+
+.wp-grade-approvals__panel {
+  background: #fff;
+  border: 1px solid #dee2e6;
+  border-radius: 0.25rem;
+  overflow: hidden;
+}
+
+.wp-grade-approvals__table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  font-size: 0.875rem;
+}
+
+.wp-grade-approvals__table th,
+.wp-grade-approvals__table td {
+  padding: 0.7rem 0.85rem;
+  text-align: left;
+  vertical-align: middle;
+  border: 1px solid #ced4da;
+}
+
+.wp-grade-approvals__table thead th {
+  background: #e9ecef;
+  font-weight: 600;
+}
+
+.wp-grade-approvals__table tbody tr:nth-child(even) td {
+  background: #f8f9fa;
+}
+
+.wp-grade-approvals__actions {
+  white-space: nowrap;
+}
+
+.wp-grade-approvals__actions .btn + .btn {
+  margin-left: 0.35rem;
+}
+
+.wp-grade-approvals__empty {
+  text-align: center;
+  color: #64748b;
+  padding: 1.5rem !important;
+}

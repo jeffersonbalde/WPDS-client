@@ -1,0 +1,74 @@
+.btn-link {
+  display: inline-block;
+  padding: 0.5rem 0.9rem;
+  background: var(--wp-blue);
+  color: white;
+  border-radius: 0.25rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-decoration: none;
+}
+.btn-link:hover {
+  background: var(--wp-blue-dark);
+}
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+}
+.data-table th,
+.data-table td {
+  border: 1px solid #dee2e6;
+  padding: 0.55rem 0.65rem;
+  text-align: left;
+}
+.data-table th {
+  background: #f1f3f5;
+  font-weight: 600;
+}
+.data-table tr:nth-child(even) {
+  background: #fafafa;
+}
+
+/* Form fields use Bootstrap .form-control / .form-select / .form-control-plaintext */
+
+/* Scoped so Bootstrap `.btn` on login does not fight dashboard styles */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.45rem 0.9rem;
+  border-radius: 0.25rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+}
+.btn-primary {
+  background: var(--wp-blue);
+  color: white;
+}
+.btn-primary:hover {
+  background: var(--wp-blue-dark);
+}
+.btn-success {
+  background: #198754;
+  color: white;
+}
+.btn-danger {
+  background: var(--wp-red);
+  color: white;
+}
+.btn-secondary {
+  background: #6c757d;
+  color: white;
+}
+
+/* Keep dashboard buttons consistent after Bootstrap loads on /login */
+main .btn-primary,
+header .btn-primary {
+  background: var(--wp-blue);
+  color: white;
+  border-color: var(--wp-blue);
+}

@@ -1,0 +1,154 @@
+/* West Prime Portal — flat loading states */
+
+.wp-loader {
+  --wp-loader-blue: #1036c9;
+  --wp-loader-muted: #64748b;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.wp-loader--fullscreen,
+.wp-loader--overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 11000;
+}
+
+.wp-loader--fullscreen.wp-loader--brand {
+  background: #1036c9;
+}
+
+.wp-loader--overlay {
+  background: rgba(15, 23, 42, 0.35);
+}
+
+.wp-loader--overlay .wp-loader__inner {
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  padding: 2rem;
+  min-width: min(92vw, 16rem);
+}
+
+.wp-loader--page {
+  min-height: clamp(12rem, 36vh, 20rem);
+  padding: 2rem 1rem;
+  width: 100%;
+}
+
+.wp-loader--inline {
+  justify-content: center;
+  padding: 1.25rem 0.5rem;
+  min-height: auto;
+}
+
+.wp-loader--inline .wp-loader__inner {
+  flex-direction: row;
+  gap: 0.65rem;
+}
+
+.wp-loader__inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.wp-loader__mark {
+  position: relative;
+  width: 6.5rem;
+  height: 6.5rem;
+  display: grid;
+  place-items: center;
+}
+
+.wp-loader--page .wp-loader__mark {
+  width: 5.5rem;
+  height: 5.5rem;
+}
+
+.wp-loader__logo-disc {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  width: 5rem;
+  height: 5rem;
+  border-radius: 50%;
+  background: #fff;
+}
+
+.wp-loader--page .wp-loader__logo-disc {
+  width: 4.25rem;
+  height: 4.25rem;
+}
+
+.wp-loader__logo {
+  width: 3.75rem;
+  height: 3.75rem;
+  object-fit: contain;
+  display: block;
+}
+
+.wp-loader--page .wp-loader__logo {
+  width: 3.25rem;
+  height: 3.25rem;
+}
+
+.wp-loader__ring {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  border-top-color: rgba(255, 255, 255, 0.9);
+  border-right-color: rgba(255, 255, 255, 0.2);
+  animation: wp-loader-spin 0.85s linear infinite;
+}
+
+.wp-loader--page .wp-loader__ring {
+  border-top-color: var(--wp-loader-blue);
+  border-right-color: rgba(16, 54, 201, 0.15);
+}
+
+.wp-loader__spinner {
+  width: 1.1rem;
+  height: 1.1rem;
+  border: 2px solid #dbeafe;
+  border-top-color: var(--wp-loader-blue);
+  border-radius: 50%;
+  animation: wp-loader-spin 0.75s linear infinite;
+  flex-shrink: 0;
+}
+
+.wp-loader__text {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--wp-loader-muted);
+}
+
+@keyframes wp-loader-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wp-loader__ring,
+  .wp-loader__spinner {
+    animation: none;
+    border-top-color: var(--wp-loader-blue);
+  }
+
+  .wp-loader--brand .wp-loader__ring {
+    border-top-color: rgba(255, 255, 255, 0.9);
+  }
+}
+
+.wp-flat__loading-cell {
+  padding: 1.5rem 1rem !important;
+}
+
+.wp-flat__loading-cell .wp-loader--inline {
+  justify-content: center;
+}

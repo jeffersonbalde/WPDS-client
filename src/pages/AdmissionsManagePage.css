@@ -1,0 +1,124 @@
+.wp-adm button.wp-flat__stat {
+  appearance: none;
+  -webkit-appearance: none;
+  font: inherit;
+  color: inherit;
+  text-align: left;
+  width: 100%;
+  cursor: pointer;
+  background: #fff;
+  border: 1px solid #dee2e6;
+  border-left: 4px solid #6c757d;
+}
+
+.wp-adm button.wp-flat__stat--blue {
+  border-left-color: #1036c9;
+}
+
+.wp-adm button.wp-flat__stat--teal {
+  border-left-color: #0d9488;
+}
+
+.wp-adm button.wp-flat__stat--slate {
+  border-left-color: #64748b;
+}
+
+.wp-adm button.wp-flat__stat:focus-visible {
+  outline: 2px solid #1036c9;
+  outline-offset: 2px;
+}
+
+.wp-adm .wp-flat__stat.is-selected {
+  border-color: #1036c9;
+  box-shadow: 0 0 0 2px rgba(16, 54, 201, 0.16);
+}
+
+.wp-adm .wp-flat__stat-label {
+  line-height: 1.3;
+  white-space: normal;
+}
+
+.wp-adm .wp-flat__stats {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+@media (max-width: 991.98px) {
+  .wp-adm .wp-flat__stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.wp-adm__term-filter {
+  flex: 0 1 22rem;
+  min-width: 16rem;
+  max-width: 26rem;
+}
+
+.wp-adm__status-filter {
+  flex: 0 1 11rem;
+  min-width: 9rem;
+  max-width: 13rem;
+}
+
+.wp-adm__term-filter .wp-flat-search__count {
+  display: none;
+}
+
+.wp-adm__term-filter .wp-flat-search__trigger {
+  min-height: 2.15rem;
+  font-size: 0.875rem;
+}
+
+.wp-adm__term-filter .wp-flat-search__panel--overlay .wp-flat-search__option {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.12rem;
+  padding: 0.55rem 0.65rem;
+}
+
+.wp-adm__term-filter .wp-flat-search__panel--overlay .wp-flat-search__option-label {
+  white-space: normal;
+  line-height: 1.35;
+  font-weight: 500;
+}
+
+.wp-adm__term-filter .wp-flat-search__panel--overlay .wp-flat-search__option-meta {
+  max-width: none;
+  font-size: 0.72rem;
+  color: #64748b;
+  white-space: normal;
+}
+
+@media (min-width: 992px) {
+  .wp-adm__term-filter {
+    flex: 0 1 24rem;
+    min-width: 18rem;
+    max-width: 28rem;
+  }
+}
+
+@media (max-width: 767.98px) {
+  .wp-adm__term-filter {
+    flex: 1 1 100%;
+    min-width: 0;
+    max-width: none;
+  }
+
+  .wp-adm__status-filter {
+    flex: 1 1 calc(50% - 0.3rem);
+    min-width: 0;
+    max-width: none;
+  }
+
+  .wp-adm .wp-flat__records {
+    flex: 1 1 calc(50% - 0.3rem);
+    width: auto;
+    margin-left: 0;
+  }
+
+  .wp-adm .wp-flat__records .wp-flat__control {
+    flex: 1 1 auto;
+    min-width: 4.5rem;
+    max-width: none;
+  }
+}

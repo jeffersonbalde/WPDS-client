@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/png" href="/brand/west-prime-logo.png" />
+    <link rel="apple-touch-icon" href="/brand/west-prime-logo.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,400..700;1,14..32,400..700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <title>West Prime Portal</title>
+    <style>
+      #wp-splash {
+        position: fixed;
+        inset: 0;
+        z-index: 9998;
+        display: grid;
+        place-items: center;
+        background: #1036c9;
+        font-family: Inter, system-ui, sans-serif;
+        transition: opacity 0.35s ease, visibility 0.35s ease;
+      }
+      #wp-splash.is-hidden {
+        opacity: 0;
+        visibility: hidden;
+        pointer-events: none;
+      }
+      #wp-splash .wp-splash__mark {
+        position: relative;
+        width: 6.5rem;
+        height: 6.5rem;
+        display: grid;
+        place-items: center;
+      }
+      #wp-splash .wp-splash__logo-disc {
+        position: relative;
+        z-index: 1;
+        display: grid;
+        place-items: center;
+        width: 5rem;
+        height: 5rem;
+        border-radius: 50%;
+        background: #fff;
+      }
+      #wp-splash .wp-splash__logo {
+        width: 3.75rem;
+        height: 3.75rem;
+        object-fit: contain;
+        display: block;
+      }
+      #wp-splash .wp-splash__ring {
+        position: absolute;
+        inset: 0;
+        border-radius: 50%;
+        border: 2px solid transparent;
+        border-top-color: rgba(255, 255, 255, 0.9);
+        border-right-color: rgba(255, 255, 255, 0.2);
+        animation: wp-splash-spin 0.85s linear infinite;
+      }
+      @keyframes wp-splash-spin { to { transform: rotate(360deg); } }
+      @media (prefers-reduced-motion: reduce) {
+        #wp-splash .wp-splash__ring { animation: none; }
+      }
+    </style>
+  </head>
+  <body>
+    <div id="wp-splash" role="status" aria-live="polite" aria-label="Loading">
+      <div class="wp-splash__mark">
+        <span class="wp-splash__ring" aria-hidden="true"></span>
+        <span class="wp-splash__logo-disc">
+          <img class="wp-splash__logo" src="/brand/west-prime-logo.png" alt="" />
+        </span>
+      </div>
+    </div>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>

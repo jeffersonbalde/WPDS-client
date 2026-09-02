@@ -1,0 +1,90 @@
+.wp-curr__toolbar {
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0.35rem;
+}
+
+.wp-curr__toolbar .wp-prog-select {
+  flex: 1 1 auto;
+  width: 100%;
+  max-width: none;
+}
+
+.wp-curr__toolbar-meta {
+  margin-left: 0;
+  font-size: 0.825rem;
+  font-weight: 500;
+  color: #495057;
+}
+
+.wp-curr__group-row td {
+  padding: 0.55rem 0.85rem !important;
+  background-color: #e9ecef !important;
+  border-color: #ced4da !important;
+}
+
+.wp-curr__group-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 0.75rem;
+}
+
+.wp-curr__group-label {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #212529;
+}
+
+.wp-curr__group-count {
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: #6c757d;
+}
+
+.wp-curr__group-bar .wp-flat__btn {
+  margin-left: auto;
+}
+
+.wp-curr .wp-flat__btn--danger {
+  background: #dc3545;
+  border-color: #dc3545;
+  color: #fff;
+}
+
+.wp-curr .wp-flat__btn--danger:hover:not(:disabled) {
+  background: #bb2d3b;
+  border-color: #b02a37;
+  color: #fff;
+}
+
+.wp-curr tr.is-removing {
+  opacity: 0.65;
+}
+
+.wp-curr .wp-flat__btn .is-spin {
+  animation: wp-curr-spin 0.8s linear infinite;
+}
+
+@keyframes wp-curr-spin {
+  to { transform: rotate(360deg); }
+}
+
+@media (max-width: 767.98px) {
+  .wp-curr__toolbar-meta {
+    padding-bottom: 0.15rem;
+  }
+}
+
+@media (max-width: 575.98px) {
+
+  .wp-curr__group-bar .wp-flat__btn {
+    margin-left: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wp-curr .wp-flat__btn .is-spin {
+    animation: none;
+  }
+}

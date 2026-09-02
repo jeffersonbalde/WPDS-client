@@ -1,0 +1,140 @@
+/* Flat toastify — clean SCC-style, brand-aligned */
+.Toastify__toast-container {
+  z-index: 10000;
+  width: min(24rem, calc(100vw - 1.25rem));
+  padding: 1rem;
+}
+
+.Toastify__toast {
+  display: flex !important;
+  align-items: center !important;
+  gap: 0.35rem !important;
+  font-family: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif !important;
+  font-size: 0.9rem !important;
+  font-weight: 500 !important;
+  line-height: 1.45 !important;
+  color: #1e293b !important;
+  background: #fff !important;
+  border: 1px solid #e2e8f0 !important;
+  border-radius: 0.35rem !important;
+  border-left: 4px solid #64748b !important;
+  box-shadow: 0 6px 20px rgba(15, 23, 42, 0.1) !important;
+  min-height: 3.65rem !important;
+  padding: 0.95rem 1rem !important;
+  margin-bottom: 0.65rem !important;
+}
+
+.Toastify__toast-body {
+  display: flex !important;
+  align-items: center !important;
+  gap: 0.75rem !important;
+  flex: 1 1 auto !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  color: inherit !important;
+}
+
+.Toastify__toast-body > div:last-child {
+  flex: 1 1 auto;
+  padding-right: 0.35rem;
+}
+
+.Toastify__toast-icon {
+  flex: 0 0 auto !important;
+  width: 1.35rem !important;
+  margin: 0 !important;
+  margin-inline-end: 0 !important;
+}
+
+.Toastify__toast-icon svg {
+  width: 1.35rem !important;
+  height: 1.35rem !important;
+}
+
+.Toastify__close-button {
+  flex: 0 0 auto !important;
+  color: #64748b !important;
+  opacity: 0.7 !important;
+  align-self: center !important;
+  padding: 0.15rem !important;
+  margin-left: 0.35rem !important;
+}
+
+.Toastify__close-button:hover {
+  opacity: 1 !important;
+  color: #334155 !important;
+}
+
+.Toastify__progress-bar {
+  height: 2px !important;
+  opacity: 0.7;
+}
+
+/* Success */
+.Toastify__toast--success {
+  background: #f3faf6 !important;
+  border-color: #cce8d8 !important;
+  border-left-color: #198754 !important;
+  color: #14532d !important;
+}
+
+.Toastify__toast--success .Toastify__toast-icon {
+  color: #198754 !important;
+}
+
+.Toastify__toast--success .Toastify__progress-bar {
+  background: #198754 !important;
+}
+
+/* Error */
+.Toastify__toast--error {
+  background: #fff5f5 !important;
+  border-color: #fecaca !important;
+  border-left-color: #f30500 !important;
+  color: #7f1d1d !important;
+}
+
+.Toastify__toast--error .Toastify__toast-icon {
+  color: #f30500 !important;
+}
+
+.Toastify__toast--error .Toastify__progress-bar {
+  background: #f30500 !important;
+}
+
+/* Info */
+.Toastify__toast--info {
+  background: #f5f7ff !important;
+  border-color: #c7d2fe !important;
+  border-left-color: #1036c9 !important;
+  color: #1e3a8a !important;
+}
+
+.Toastify__toast--info .Toastify__toast-icon {
+  color: #1036c9 !important;
+}
+
+.Toastify__toast--info .Toastify__progress-bar {
+  background: #1036c9 !important;
+}
+
+/* Warning */
+.Toastify__toast--warning {
+  background: #fffbeb !important;
+  border-color: #fde68a !important;
+  border-left-color: #d97706 !important;
+  color: #92400e !important;
+}
+
+.Toastify__toast--warning .Toastify__toast-icon {
+  color: #d97706 !important;
+}
+
+.Toastify__toast--warning .Toastify__progress-bar {
+  background: #d97706 !important;
+}
+
+.Toastify__toast--default {
+  background: #f8fafc !important;
+  border-left-color: #64748b !important;
+}
