@@ -40,6 +40,7 @@ export default function FlatSearchSelect({
   const listboxId = `${inputId}-listbox`
   const rootRef = useRef(null)
   const searchRef = useRef(null)
+  const wasOpenRef = useRef(false)
   const [open, setOpen] = useState(false)
   const [search, setSearch] = useState('')
   const [activeFilter, setActiveFilter] = useState(filters?.[0]?.key ?? 'all')
@@ -72,6 +73,10 @@ export default function FlatSearchSelect({
     return items
   }, [filtered, allowEmpty, search])
 
+  const initialLoading = loading && options.length === 0 && !selected
+  const panelLoading = loading
+  const busy = disabled || initialLoading
+
   useEffect(() => {
     if (!open || !overlayPanel) return undefined
     const modalBody = rootRef.current?.closest('.wp-srm__body')
@@ -92,13 +97,31 @@ export default function FlatSearchSelect({
   }, [search, activeFilter, open])
 
   useEffect(() => {
-    if (!serverSearch || !onSearchQueryChange || !open) return undefined
-    const delay = search.trim() ? 300 : 0
+    if (!serverSearch || !onSearchQueryChange) {
+      wasOpenRef.current = open
+      return undefined
+    }
+
+    if (!open) {
+      wasOpenRef.current = false
+      return undefined
+    }
+
+    const justOpened = !wasOpenRef.current
+    wasOpenRef.current = true
+    const q = search.trim()
+
+    // Keep cached options when reopening with an empty query.
+    if (justOpened && !q && options.length > 0) {
+      return undefined
+    }
+
+    const delay = q ? 300 : (justOpened ? 0 : 150)
     const timer = window.setTimeout(() => {
-      onSearchQueryChange(search.trim())
+      onSearchQueryChange(q)
     }, delay)
     return () => window.clearTimeout(timer)
-  }, [search, open, serverSearch, onSearchQueryChange])
+  }, [search, open, serverSearch, onSearchQueryChange, options.length])
 
   useEffect(() => {
     if (!open) return undefined
@@ -133,13 +156,13 @@ export default function FlatSearchSelect({
   }
 
   function pick(item, isEmpty = false) {
-    if (disabled || loading) return
+    if (disabled || initialLoading) return
     onChange?.(isEmpty ? '' : String(getValue(item)))
     closePanel()
   }
 
   function toggleOpen() {
-    if (disabled || loading) return
+    if (disabled || initialLoading) return
     if (open) {
       closePanel()
       return
@@ -148,7 +171,7 @@ export default function FlatSearchSelect({
   }
 
   function onTriggerKeyDown(e) {
-    if (disabled || loading) return
+    if (disabled || initialLoading) return
     if (e.key === 'Enter' || e.key === ' ' || e.key === 'ArrowDown' || e.key === 'ArrowUp') {
       e.preventDefault()
       if (!open) setOpen(true)
@@ -167,26 +190,26 @@ export default function FlatSearchSelect({
     if (e.key === 'Enter') {
       e.preventDefault()
       const row = listItems[highlight]
-      if (!row) return
+      if (!row || panelLoading) return
       if (row.type === 'empty') pick(null, true)
       else pick(row.item)
     }
     if (e.key === 'Tab') closePanel()
   }
 
-  const busy = disabled || loading
   let triggerText = placeholder
-  if (loading) triggerText = 'Loading options…'
+  if (initialLoading) triggerText = 'Loading options…'
   else if (selected) triggerText = getLabel(selected)
   else if (allowEmpty && value === '') triggerText = emptyOptionLabel
-  else if (!options.length) triggerText = 'No options available'
+  else if (!options.length && !panelLoading) triggerText = 'No options available'
 
   const rootClass = [
     'wp-flat-search',
     compact ? 'wp-flat-search--compact' : '',
     open ? 'is-open' : '',
     busy ? 'is-disabled' : '',
-    loading ? 'is-loading' : '',
+    initialLoading ? 'is-loading' : '',
+    panelLoading && !initialLoading ? 'is-searching' : '',
     invalid ? 'is-invalid' : '',
     className,
   ]
@@ -213,9 +236,10 @@ export default function FlatSearchSelect({
         aria-expanded={open}
         aria-controls={listboxId}
         aria-invalid={invalid || undefined}
+        aria-busy={panelLoading || undefined}
       >
-        <span className={`wp-flat-search__value${selected || loading || (allowEmpty && value === '') ? '' : ' is-placeholder'}`}>
-          {loading ? (
+        <span className={`wp-flat-search__value${selected || initialLoading || (allowEmpty && value === '') ? '' : ' is-placeholder'}`}>
+          {initialLoading ? (
             <span className="wp-flat-search__loading-text">
               <span className="wp-flat-search__spinner" aria-hidden />
               {triggerText}
@@ -282,61 +306,71 @@ export default function FlatSearchSelect({
           ) : null}
 
           <p className="wp-flat-search__count">
-            {loading
+            {panelLoading
               ? 'Loading…'
               : `${listItems.length} ${countLabel}${listItems.length === 1 ? '' : 's'}`}
           </p>
 
           <ul id={listboxId} className="wp-flat-search__list" role="listbox">
-            {loading ? (
+            {panelLoading && options.length === 0 ? (
               <li className="wp-flat-search__loading" aria-live="polite">
                 <span className="wp-flat-search__spinner" aria-hidden />
                 Loading options…
               </li>
             ) : listItems.length === 0 ? (
-              <li className="wp-flat-search__empty">No matches found.</li>
+              <li className="wp-flat-search__empty">
+                {panelLoading ? 'Searching…' : 'No matches found.'}
+              </li>
             ) : (
-              listItems.map((row, idx) => {
-                if (row.type === 'empty') {
-                  const active = value === ''
+              <>
+                {panelLoading ? (
+                  <li className="wp-flat-search__loading wp-flat-search__loading--inline" aria-live="polite">
+                    <span className="wp-flat-search__spinner" aria-hidden />
+                    Updating results…
+                  </li>
+                ) : null}
+                {listItems.map((row, idx) => {
+                  if (row.type === 'empty') {
+                    const active = value === ''
+                    const hot = idx === highlight
+                    return (
+                      <li key="__empty__" role="presentation">
+                        <button
+                          type="button"
+                          role="option"
+                          aria-selected={active}
+                          className={`wp-flat-search__option${active ? ' is-selected' : ''}${hot ? ' is-highlight' : ''}`}
+                          onMouseEnter={() => setHighlight(idx)}
+                          onClick={() => pick(null, true)}
+                        >
+                          <span className="wp-flat-search__option-label">{emptyOptionLabel}</span>
+                        </button>
+                      </li>
+                    )
+                  }
+
+                  const item = row.item
+                  const active = String(getValue(item)) === String(value)
                   const hot = idx === highlight
+                  const meta = getMeta?.(item)
+
                   return (
-                    <li key="__empty__" role="presentation">
+                    <li key={getValue(item)} role="presentation">
                       <button
                         type="button"
                         role="option"
                         aria-selected={active}
                         className={`wp-flat-search__option${active ? ' is-selected' : ''}${hot ? ' is-highlight' : ''}`}
                         onMouseEnter={() => setHighlight(idx)}
-                        onClick={() => pick(null, true)}
+                        onClick={() => pick(item)}
                       >
-                        <span className="wp-flat-search__option-label">{emptyOptionLabel}</span>
+                        <span className="wp-flat-search__option-label">{getLabel(item)}</span>
+                        {meta ? <span className="wp-flat-search__option-meta">{meta}</span> : null}
                       </button>
                     </li>
                   )
-                }
-
-                const item = row.item
-                const active = String(getValue(item)) === String(value)
-                const hot = idx === highlight
-                const meta = getMeta?.(item)
-
-                return (
-                  <li key={getValue(item)} role="presentation">
-                    <button
-                      type="button"
-                      role="option"
-                      aria-selected={active}
-                      className={`wp-flat-search__option${active ? ' is-selected' : ''}${hot ? ' is-highlight' : ''}`}
-                      onMouseEnter={() => setHighlight(idx)}
-                      onClick={() => pick(item)}
-                    >
-                      <span className="wp-flat-search__option-label">{getLabel(item)}</span>
-                      {meta ? <span className="wp-flat-search__option-meta">{meta}</span> : null}
-                    </button>
-                  </li>
-                )
-              })
+                })}
+              </>
             )}
           </ul>
         </div>

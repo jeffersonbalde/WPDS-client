@@ -11,6 +11,7 @@ import PageLoadingRow from '../components/common/PageLoadingRow'
 import { apiErrorMessage } from '../utils/apiError'
 import { downloadExcelExport, excelExportError } from '../utils/excelExport'
 import { levelLabel } from '../utils/level'
+import { wpAlert, wpConfirm } from '../utils/wpSwal'
 import './StudentsManagePage.css'
 import './ClassSectionsManagePage.css'
 
@@ -19,6 +20,23 @@ function scheduleText(row) {
   if (!parts.length && !row.room) return '—'
   const schedule = parts.join(' · ')
   return row.room ? `${schedule}${schedule ? ' · ' : ''}${row.room}` : schedule
+}
+
+function escapeHtml(value) {
+  return String(value ?? '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+}
+
+function sectionLabelHtml(row) {
+  const code = escapeHtml(row?.subject?.code || '—')
+  const title = escapeHtml(row?.subject?.title || '')
+  const section = escapeHtml(row?.section || '—')
+  const term = escapeHtml(row?.school_term?.name || '—')
+  const subject = title ? `${code} — ${title}` : code
+  return `<strong>${subject}</strong> · Sec. ${section} · ${term}`
 }
 
 function filterTermBySearch(term, query) {
@@ -47,6 +65,7 @@ export default function ClassSectionsManagePage() {
   const [modalSection, setModalSection] = useState(null)
   const [studentsModalSection, setStudentsModalSection] = useState(null)
   const [exporting, setExporting] = useState(false)
+  const [deletingId, setDeletingId] = useState(null)
 
   const termFilterOptions = useMemo(
     () => terms,
@@ -172,7 +191,70 @@ export default function ClassSectionsManagePage() {
     }
   }
 
-  const pagerDisabled = loading
+  async function deleteSection(row) {
+    if (!row?.id || deletingId) return
+
+    const enrolled = Number(row.enrollment_subjects_count || 0)
+    const label = sectionLabelHtml(row)
+
+    if (enrolled > 0) {
+      await wpAlert({
+        icon: 'error',
+        title: 'This class section cannot be deleted',
+        html: `
+          <div class="wp-swal__detail">
+            <p class="wp-swal__detail-lead">${label} already has <strong>${enrolled}</strong> enrolled student${enrolled === 1 ? '' : 's'}.</p>
+            <p class="wp-swal__detail-note">Edit the section instead so student enrollment records stay intact.</p>
+          </div>
+        `,
+        confirmText: 'OK',
+      })
+      return
+    }
+
+    const ok = await wpConfirm({
+      icon: 'warning',
+      title: 'Delete this class section?',
+      html: `
+        <div class="wp-swal__detail">
+          <p class="wp-swal__detail-lead">${label} has no enrolled students and will be permanently removed.</p>
+          <p class="wp-swal__detail-note">This cannot be undone.</p>
+        </div>
+      `,
+      confirmText: 'Delete section',
+      danger: true,
+    })
+    if (!ok) return
+
+    setDeletingId(row.id)
+    try {
+      await api.delete(`/class-sections/${row.id}`)
+      toast.success('Class section deleted.')
+      await load()
+    } catch (err) {
+      const usage = err?.response?.data?.usage
+      if (usage && usage.can_delete === false) {
+        const count = Number(usage.enrolled_students || 0)
+        await wpAlert({
+          icon: 'error',
+          title: 'This class section cannot be deleted',
+          html: `
+            <div class="wp-swal__detail">
+              <p class="wp-swal__detail-lead">${label} already has <strong>${count}</strong> enrolled student${count === 1 ? '' : 's'}.</p>
+              <p class="wp-swal__detail-note">Edit the section instead so student enrollment records stay intact.</p>
+            </div>
+          `,
+          confirmText: 'OK',
+        })
+      } else {
+        toast.error(apiErrorMessage(err, 'Failed to delete class section.'))
+      }
+    } finally {
+      setDeletingId(null)
+    }
+  }
+
+  const pagerDisabled = loading || exporting || Boolean(deletingId) || modalOpen || Boolean(studentsModalSection)
 
   return (
     <div className="wp-flat wp-cs">
@@ -349,6 +431,7 @@ export default function ClassSectionsManagePage() {
                           type="button"
                           className="wp-flat__btn wp-flat__btn--edit wp-flat__btn--sm"
                           onClick={() => openEditModal(row)}
+                          disabled={Boolean(deletingId)}
                         >
                           Edit
                         </button>
@@ -357,8 +440,17 @@ export default function ClassSectionsManagePage() {
                           className="wp-flat__btn wp-flat__btn--success wp-flat__btn--sm"
                           onClick={() => openStudentsModal(row)}
                           title="View enrolled students"
+                          disabled={Boolean(deletingId)}
                         >
                           View Students
+                        </button>
+                        <button
+                          type="button"
+                          className="wp-flat__btn wp-flat__btn--danger wp-flat__btn--sm"
+                          onClick={() => deleteSection(row)}
+                          disabled={Boolean(deletingId)}
+                        >
+                          {deletingId === row.id ? 'Deleting…' : 'Delete'}
                         </button>
                       </div>
                     </td>

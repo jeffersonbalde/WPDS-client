@@ -7,7 +7,7 @@ import PageLoadingRow from '../components/common/PageLoadingRow'
 import SchoolTermFormModal from '../components/school-terms/SchoolTermFormModal'
 import { apiErrorMessage } from '../utils/apiError'
 import { downloadExcelExport, excelExportError } from '../utils/excelExport'
-import { wpAlert, wpConfirm } from '../utils/wpSwal'
+import { wpAlert, wpConfirm, wpWithLoading } from '../utils/wpSwal'
 import './StudentsManagePage.css'
 import './TermsPage.css'
 
@@ -149,7 +149,10 @@ export default function TermsPage() {
       class_sections_count: 0,
     }
     try {
-      usage = await loadUsage(term)
+      usage = await wpWithLoading(
+        () => loadUsage(term),
+        { title: 'Checking school term…', text: 'Looking up linked admissions and class sections.' },
+      )
     } catch (err) {
       toast.error(apiErrorMessage(err, 'Failed to check school term usage.'))
       return

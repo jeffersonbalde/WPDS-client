@@ -4,7 +4,7 @@ import { FiArrowLeft, FiEye, FiEyeOff, FiUserPlus } from 'react-icons/fi'
 import { toast } from 'react-toastify'
 import api from '../api/client'
 import { apiErrorMessage } from '../utils/apiError'
-import { wpConfirm, wpConfirmDiscard, wpSuccess } from '../utils/wpSwal'
+import { wpConfirm, wpConfirmDiscard, wpSuccess, wpWithLoading } from '../utils/wpSwal'
 import {
   defaultEducationalBackground,
   defaultParentsGuardian,
@@ -346,7 +346,10 @@ export default function StudentCreatePage() {
       return
     }
 
-    const dup = await checkEmailsAvailable()
+    const dup = await wpWithLoading(
+      () => checkEmailsAvailable(),
+      { title: 'Checking details…', text: 'Verifying email and portal login before creating.' },
+    )
     if (Object.keys(dup).length) {
       setErrors(dup)
       setTab('info')

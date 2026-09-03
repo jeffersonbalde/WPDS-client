@@ -9,7 +9,7 @@ import CurriculumAddModal from '../components/curriculum/CurriculumAddModal'
 import { apiErrorMessage } from '../utils/apiError'
 import { downloadExcelExport, excelExportError } from '../utils/excelExport'
 import { curriculumRemoveDialogHtml } from '../utils/subjectUsage'
-import { wpConfirm } from '../utils/wpSwal'
+import { wpConfirm, wpWithLoading } from '../utils/wpSwal'
 import './StudentsManagePage.css'
 import './CurriculumManagePage.css'
 
@@ -204,11 +204,17 @@ export default function CurriculumManagePage() {
   }
 
   async function removeItem(row) {
+    if (removingId != null) return
     const label = `${row.subject?.code || 'Subject'} — ${row.subject?.title || ''}`.trim()
     let usage = null
     try {
-      const { data } = await api.get(`/curriculum/${row.id}/usage`)
-      usage = data
+      usage = await wpWithLoading(
+        async () => {
+          const { data } = await api.get(`/curriculum/${row.id}/usage`)
+          return data
+        },
+        { title: 'Checking curriculum item…', text: 'Looking up enrolled students for this subject.' },
+      )
     } catch {
       usage = null
     }

@@ -6,7 +6,7 @@ import api from '../api/client'
 import WestPrimeLoader from '../components/common/WestPrimeLoader'
 import StudentProfilePanels from '../components/student-profile/StudentProfilePanels'
 import { apiErrorMessage } from '../utils/apiError'
-import { wpConfirm, wpConfirmDiscard } from '../utils/wpSwal'
+import { wpConfirm, wpConfirmDiscard, wpWithLoading } from '../utils/wpSwal'
 import {
   normalizeEducationalBackground,
   normalizeParentsGuardian,
@@ -224,7 +224,10 @@ export default function StudentEditPage() {
       return
     }
 
-    const emailMsg = await checkContactEmail(profile.contact_email)
+    const emailMsg = await wpWithLoading(
+      () => checkContactEmail(profile.contact_email),
+      { title: 'Checking details…', text: 'Verifying email before saving.' },
+    )
     if (emailMsg) {
       setErrors({ contact_email: emailMsg })
       setTab('info')

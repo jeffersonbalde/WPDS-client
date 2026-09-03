@@ -4,7 +4,7 @@ import { toast } from 'react-toastify'
 import api from '../../api/client'
 import { apiErrorMessage } from '../../utils/apiError'
 import { isSameProgramCode, isSameProgramName, normalizeProgramName, programLevel } from '../../utils/program'
-import { wpAlert, wpConfirm, wpConfirmDiscard } from '../../utils/wpSwal'
+import { wpAlert, wpConfirm, wpConfirmDiscard, wpWithLoading } from '../../utils/wpSwal'
 import '../students/StudentRecordModal.css'
 
 const ANIM_MS = 220
@@ -288,8 +288,13 @@ export default function ProgramFormModal({ program, onClose, onSaved, onUpdated 
     try {
       let usage = null
       try {
-        const { data } = await api.get(`/programs/${program.id}/majors/${row.id}/usage`)
-        usage = data
+        usage = await wpWithLoading(
+          async () => {
+            const { data } = await api.get(`/programs/${program.id}/majors/${row.id}/usage`)
+            return data
+          },
+          { title: 'Checking major…', text: 'Looking up linked student and admission records.' },
+        )
       } catch {
         usage = null
       }

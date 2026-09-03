@@ -7,6 +7,7 @@ import PageLoadingRow from '../components/common/PageLoadingRow'
 import StudentRecordModal from '../components/students/StudentRecordModal'
 import { apiErrorMessage } from '../utils/apiError'
 import { majorLabel } from '../utils/program'
+import { wpAlert, wpConfirm, wpWithLoading } from '../utils/wpSwal'
 import './StudentsManagePage.css'
 
 function levelValue(level) {
@@ -28,6 +29,26 @@ function displayName(s) {
   return `${last}, ${first}${middle}`.trim()
 }
 
+function escapeHtml(value) {
+  return String(value ?? '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+}
+
+function studentUsageHtml(intro, usage) {
+  const admissions = Number(usage?.admissions || 0)
+  const grades = Number(usage?.grades || 0)
+  const chips = []
+  if (admissions) chips.push(`Admissions ${admissions}`)
+  if (grades) chips.push(`Grades ${grades}`)
+  const chipsHtml = chips.length
+    ? `<div class="wp-swal__counts">${chips.map((chip) => `<span>${escapeHtml(chip)}</span>`).join('')}</div>`
+    : ''
+  return `<p>${intro}</p>${chipsHtml}`
+}
+
 export default function StudentsManagePage() {
   const [rows, setRows] = useState([])
   const [loading, setLoading] = useState(true)
@@ -43,6 +64,7 @@ export default function StudentsManagePage() {
   const [summaryReady, setSummaryReady] = useState(false)
   const [exporting, setExporting] = useState(false)
   const [viewStudentId, setViewStudentId] = useState(null)
+  const [deletingId, setDeletingId] = useState(null)
 
   const closeRecordModal = useCallback(() => {
     setViewStudentId(null)
@@ -154,6 +176,86 @@ export default function StudentsManagePage() {
       toast.error(message)
     } finally {
       setExporting(false)
+    }
+  }
+
+  async function deleteStudent(student) {
+    if (deletingId != null) return
+    const label = `<strong>${escapeHtml(displayName(student) || 'this student')}</strong>${
+      student.student_no ? ` (${escapeHtml(student.student_no)})` : ''
+    }`
+
+    let usage = {
+      can_delete: student.can_delete !== false && Number(student.admissions_count || 0) === 0,
+      admissions: Number(student.admissions_count || 0),
+      grades: 0,
+    }
+
+    try {
+      usage = await wpWithLoading(
+        async () => {
+          const { data } = await api.get(`/students/${student.id}/usage`)
+          return data
+        },
+        { title: 'Checking student…', text: 'Looking up admission and grade records.' },
+      )
+    } catch (err) {
+      toast.error(apiErrorMessage(err, 'Failed to check whether this student can be deleted.'))
+      return
+    }
+
+    if (!usage.can_delete || usage.in_use) {
+      await wpAlert({
+        icon: 'error',
+        title: 'This student cannot be deleted',
+        html: studentUsageHtml(
+          `${label} already has admission or grade records. Use Edit Profile to correct details instead.`,
+          usage
+        ),
+        confirmText: 'OK',
+      })
+      return
+    }
+
+    const ok = await wpConfirm({
+      icon: 'warning',
+      title: 'Delete this student?',
+      html: studentUsageHtml(
+        `${label} has no admission or grade records. The student profile and portal account will be permanently removed. This cannot be undone.`,
+        usage
+      ),
+      confirmText: 'Delete student',
+      danger: true,
+    })
+    if (!ok) return
+
+    setDeletingId(student.id)
+    try {
+      await api.delete(`/students/${student.id}`)
+      toast.success('Student deleted.')
+      if (viewStudentId === student.id) setViewStudentId(null)
+      if (rows.length === 1 && page > 1) {
+        setPage((p) => Math.max(1, p - 1))
+      } else {
+        await load()
+      }
+    } catch (err) {
+      const usageFromError = err?.response?.data?.usage
+      if (usageFromError && (usageFromError.in_use || usageFromError.can_delete === false)) {
+        await wpAlert({
+          icon: 'error',
+          title: 'This student cannot be deleted',
+          html: studentUsageHtml(
+            `${label} already has admission or grade records. Use Edit Profile to correct details instead.`,
+            usageFromError
+          ),
+          confirmText: 'OK',
+        })
+      } else {
+        toast.error(apiErrorMessage(err, 'Failed to delete student.'))
+      }
+    } finally {
+      setDeletingId(null)
     }
   }
 
@@ -348,6 +450,14 @@ export default function StudentsManagePage() {
                           <Link to={`/students/${s.id}/edit`} className="wp-flat__btn wp-flat__btn--edit wp-flat__btn--sm">
                             Edit Profile
                           </Link>
+                          <button
+                            type="button"
+                            className="wp-flat__btn wp-flat__btn--danger wp-flat__btn--sm"
+                            onClick={() => deleteStudent(s)}
+                            disabled={deletingId === s.id || loading}
+                          >
+                            {deletingId === s.id ? 'Deleting…' : 'Delete'}
+                          </button>
                         </div>
                       </td>
                       <td>{s.student_no || '—'}</td>

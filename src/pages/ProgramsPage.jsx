@@ -14,7 +14,7 @@ import PageLoadingRow from '../components/common/PageLoadingRow'
 import ProgramFormModal from '../components/programs/ProgramFormModal'
 import { apiErrorMessage } from '../utils/apiError'
 import { majorsFullText } from '../utils/program'
-import { wpAlert, wpConfirm } from '../utils/wpSwal'
+import { wpAlert, wpConfirm, wpWithLoading } from '../utils/wpSwal'
 import './StudentsManagePage.css'
 import './ProgramsPage.css'
 
@@ -287,14 +287,20 @@ export default function ProgramsPage() {
 
   async function loadUsage(program) {
     try {
-      const { data } = await api.get(`/programs/${program.id}/usage`)
-      return data
+      return await wpWithLoading(
+        async () => {
+          const { data } = await api.get(`/programs/${program.id}/usage`)
+          return data
+        },
+        { title: 'Checking program…', text: 'Looking up linked student and curriculum records.' },
+      )
     } catch {
       return emptyUsage(program)
     }
   }
 
   async function toggleActive(program) {
+    if (togglingId != null) return
     const active = program.is_active !== false
     const usage = await loadUsage(program)
     const label = `<strong>${escapeHtml(program.code)}</strong> — ${escapeHtml(program.name)}`
@@ -326,6 +332,7 @@ export default function ProgramsPage() {
   }
 
   async function deleteProgram(program) {
+    if (togglingId != null) return
     const usage = await loadUsage(program)
     const label = `<strong>${escapeHtml(program.code)}</strong> — ${escapeHtml(program.name)}`
 

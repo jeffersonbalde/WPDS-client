@@ -12,6 +12,7 @@ import AdmissionViewModal from '../components/admissions/AdmissionViewModal'
 import { apiErrorMessage } from '../utils/apiError'
 import { downloadExcelExport, excelExportError } from '../utils/excelExport'
 import { majorLabel } from '../utils/program'
+import { wpAlert, wpConfirm } from '../utils/wpSwal'
 import './StudentsManagePage.css'
 import './AdmissionsManagePage.css'
 
@@ -21,10 +22,28 @@ function statusLabel(value) {
   return s.charAt(0).toUpperCase() + s.slice(1)
 }
 
+function escapeHtml(value) {
+  return String(value ?? '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+}
+
 function filterTermBySearch(term, query) {
   const name = String(term.name || '').toLowerCase()
   const year = String(term.school_year || '').toLowerCase()
   return name.includes(query) || year.includes(query)
+}
+
+function admissionLabelHtml(admission) {
+  const number = escapeHtml(admission?.admission_number || '—')
+  const profile = admission?.student_profile
+  const name = profile
+    ? escapeHtml(`${profile.last_name || ''}, ${profile.first_name || ''}`.trim())
+    : '—'
+  const studentNo = profile?.student_no ? ` · ${escapeHtml(profile.student_no)}` : ''
+  return `<strong>${number}</strong> — ${name}${studentNo}`
 }
 
 export default function AdmissionsManagePage() {
@@ -42,6 +61,7 @@ export default function AdmissionsManagePage() {
   const [summary, setSummary] = useState({ total: 0, enrolled: 0, withdrawn: 0, completed: 0 })
   const [summaryReady, setSummaryReady] = useState(false)
   const [exporting, setExporting] = useState(false)
+  const [deletingId, setDeletingId] = useState(null)
   const [statusAdmission, setStatusAdmission] = useState(null)
   const [viewAdmissionId, setViewAdmissionId] = useState(null)
 
@@ -152,6 +172,51 @@ export default function AdmissionsManagePage() {
     }
   }
 
+  async function deleteAdmission(admission) {
+    if (!admission?.id || deletingId) return
+
+    const label = admissionLabelHtml(admission)
+    const ok = await wpConfirm({
+      icon: 'warning',
+      title: 'Delete this admission?',
+      html: `
+        <div class="wp-swal__detail">
+          <p class="wp-swal__detail-lead">${label} will be permanently removed, including any enrolled subjects with no grades yet.</p>
+          <p class="wp-swal__detail-note">If grades were already encoded, deletion will be blocked — use Status → Withdrawn instead.</p>
+        </div>
+      `,
+      confirmText: 'Delete admission',
+      danger: true,
+    })
+    if (!ok) return
+
+    setDeletingId(admission.id)
+    try {
+      await api.delete(`/admissions/${admission.id}`)
+      toast.success('Admission deleted.')
+      refreshAll()
+    } catch (err) {
+      const usage = err?.response?.data?.usage
+      if (usage && usage.can_delete === false) {
+        await wpAlert({
+          icon: 'error',
+          title: 'This admission cannot be deleted',
+          html: `
+            <div class="wp-swal__detail">
+              <p class="wp-swal__detail-lead">${label} already has recorded grades. Academic history must stay intact.</p>
+              <p class="wp-swal__detail-note">Use <strong>Status → Withdrawn</strong> instead of deleting.</p>
+            </div>
+          `,
+          confirmText: 'OK',
+        })
+      } else {
+        toast.error(apiErrorMessage(err, 'Failed to delete admission.'))
+      }
+    } finally {
+      setDeletingId(null)
+    }
+  }
+
   function setStatus(next) {
     if (next === 'all') {
       setStatusFilter('all')
@@ -161,7 +226,7 @@ export default function AdmissionsManagePage() {
     setPage(1)
   }
 
-  const pagerDisabled = loading || exporting || Boolean(statusAdmission) || Boolean(viewAdmissionId)
+  const pagerDisabled = loading || exporting || Boolean(deletingId) || Boolean(statusAdmission) || Boolean(viewAdmissionId)
 
   return (
     <div className="wp-flat wp-adm">
@@ -354,6 +419,7 @@ export default function AdmissionsManagePage() {
                           type="button"
                           className="wp-flat__btn wp-flat__btn--edit wp-flat__btn--sm"
                           onClick={() => setStatusAdmission(a)}
+                          disabled={Boolean(deletingId)}
                         >
                           Status
                         </button>
@@ -361,8 +427,17 @@ export default function AdmissionsManagePage() {
                           type="button"
                           className="wp-flat__btn wp-flat__btn--success wp-flat__btn--sm"
                           onClick={() => setViewAdmissionId(a.id)}
+                          disabled={Boolean(deletingId)}
                         >
                           View
+                        </button>
+                        <button
+                          type="button"
+                          className="wp-flat__btn wp-flat__btn--danger wp-flat__btn--sm"
+                          onClick={() => deleteAdmission(a)}
+                          disabled={Boolean(deletingId)}
+                        >
+                          {deletingId === a.id ? 'Deleting…' : 'Delete'}
                         </button>
                       </div>
                     </td>

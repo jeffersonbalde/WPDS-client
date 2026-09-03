@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { FiArrowLeft, FiClipboard } from 'react-icons/fi'
 import { toast } from 'react-toastify'
@@ -85,37 +85,49 @@ export default function AdmissionCreatePage() {
   const [loadingRefs, setLoadingRefs] = useState(true)
   const [classSections, setClassSections] = useState([])
   const [loadingSections, setLoadingSections] = useState(false)
+  const studentSearchSeq = useRef(0)
 
   const markDirty = useCallback(() => setDirty(true), [])
 
   useEffect(() => {
     let cancelled = false
-    async function loadRefs() {
+
+    async function loadCatalog() {
       setLoadingRefs(true)
-      setLoadingStudents(true)
       try {
-        const [termsRes, programsRes, studentsRes] = await Promise.all([
+        const [termsRes, programsRes] = await Promise.all([
           api.get('/school-terms', { params: { status: 'active' } }),
           api.get('/programs'),
-          api.get('/students', { params: { per_page: 25 } }),
         ])
         if (cancelled) return
         const termList = Array.isArray(termsRes.data) ? termsRes.data : (termsRes.data?.data || [])
         const programList = Array.isArray(programsRes.data) ? programsRes.data : (programsRes.data?.data || [])
-        const studentList = studentsRes.data?.data || studentsRes.data || []
         setTerms(termList.filter((t) => t.is_active !== false))
         setPrograms(programList.filter((p) => p.is_active !== false))
-        setStudentOptions(Array.isArray(studentList) ? studentList : [])
       } catch (err) {
         if (!cancelled) toast.error(apiErrorMessage(err, 'Failed to load form options.'))
       } finally {
-        if (!cancelled) {
-          setLoadingRefs(false)
-          setLoadingStudents(false)
-        }
+        if (!cancelled) setLoadingRefs(false)
       }
     }
-    loadRefs()
+
+    async function loadStudents() {
+      setLoadingStudents(true)
+      try {
+        const { data } = await api.get('/students', {
+          params: { per_page: 25, picker: 1 },
+        })
+        if (cancelled) return
+        setStudentOptions(data.data || data || [])
+      } catch (err) {
+        if (!cancelled) toast.error(apiErrorMessage(err, 'Failed to load students.'))
+      } finally {
+        if (!cancelled) setLoadingStudents(false)
+      }
+    }
+
+    loadCatalog()
+    loadStudents()
     return () => { cancelled = true }
   }, [])
 
@@ -147,17 +159,20 @@ export default function AdmissionCreatePage() {
   }, [form.school_term_id])
 
   const fetchStudents = useCallback(async (query) => {
+    const requestId = ++studentSearchSeq.current
     setLoadingStudents(true)
     try {
       const { data } = await api.get('/students', {
-        params: { search: query || undefined, per_page: 25 },
+        params: { search: query || undefined, per_page: 25, picker: 1 },
       })
+      if (requestId !== studentSearchSeq.current) return
       setStudentOptions(data.data || data || [])
     } catch (err) {
+      if (requestId !== studentSearchSeq.current) return
       setStudentOptions([])
       toast.error(apiErrorMessage(err, 'Failed to search students.'))
     } finally {
-      setLoadingStudents(false)
+      if (requestId === studentSearchSeq.current) setLoadingStudents(false)
     }
   }, [])
 

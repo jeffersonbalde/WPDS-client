@@ -122,6 +122,22 @@ export function wpClose() {
   Swal.close()
 }
 
+/**
+ * Show a loading dialog while work runs, then close it before resolving.
+ * Use before usage checks / email checks so clicks never feel dead.
+ */
+export async function wpWithLoading(work, {
+  title = 'Please wait…',
+  text = 'Checking records…',
+} = {}) {
+  wpLoading({ title, text })
+  try {
+    return await work()
+  } finally {
+    wpClose()
+  }
+}
+
 export async function wpAlert({
   icon = 'info',
   title = 'Notice',

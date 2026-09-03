@@ -12,7 +12,7 @@ import {
   subjectUsageDialogHtml,
   subjectUsageHasRecords,
 } from '../utils/subjectUsage'
-import { wpAlert, wpConfirm } from '../utils/wpSwal'
+import { wpAlert, wpConfirm, wpWithLoading } from '../utils/wpSwal'
 import './StudentsManagePage.css'
 import './SubjectsPage.css'
 
@@ -137,14 +137,20 @@ export default function SubjectsPage() {
 
   async function loadUsage(subject) {
     try {
-      const { data } = await api.get(`/subjects/${subject.id}/usage`)
-      return data
+      return await wpWithLoading(
+        async () => {
+          const { data } = await api.get(`/subjects/${subject.id}/usage`)
+          return data
+        },
+        { title: 'Checking subject…', text: 'Looking up curriculum and enrollment records.' },
+      )
     } catch {
       return emptySubjectUsage(subject)
     }
   }
 
   async function toggleActive(subject) {
+    if (togglingId != null) return
     const active = subject.is_active !== false
     const usage = await loadUsage(subject)
     const label = `<strong>${escapeHtml(subject.code)}</strong> — ${escapeHtml(subject.title)}`
@@ -177,6 +183,7 @@ export default function SubjectsPage() {
   }
 
   async function deleteSubject(subject) {
+    if (togglingId != null) return
     const usage = await loadUsage(subject)
     const label = `<strong>${escapeHtml(subject.code)}</strong> — ${escapeHtml(subject.title)}`
 
