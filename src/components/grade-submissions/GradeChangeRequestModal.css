@@ -1,0 +1,120 @@
+.wp-srm.wp-gcr-modal {
+  place-items: center;
+  padding: 1.25rem;
+}
+
+.wp-srm.wp-gcr-modal .wp-srm__dialog {
+  display: flex;
+  flex-direction: column;
+  width: min(40rem, calc(100vw - 2.5rem));
+  height: auto;
+  max-height: min(calc(100dvh - 2.5rem), 92vh);
+  overflow: hidden;
+}
+
+.wp-srm.wp-gcr-modal .wp-srm__header {
+  align-items: center;
+  flex-shrink: 0;
+  min-height: 0;
+  padding: 0.7rem 1rem;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.wp-srm.wp-gcr-modal .wp-srm__title {
+  font-size: 1rem;
+  font-weight: 700;
+  margin: 0;
+  min-height: 0;
+  line-height: 1.3;
+}
+
+.wp-srm.wp-gcr-modal .wp-srm__body {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 0.75rem 1rem 0.85rem;
+}
+
+.wp-gcr-modal__form {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+.wp-gcr-modal__note {
+  margin: 0 0 0.85rem;
+  font-size: 0.85rem;
+  color: #64748b;
+  line-height: 1.45;
+}
+
+.wp-gcr-modal__grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem 1rem;
+}
+
+.wp-gcr-modal__field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  min-width: 0;
+}
+
+.wp-gcr-modal__field--full {
+  grid-column: 1 / -1;
+}
+
+.wp-gcr-modal__field > span {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: #64748b;
+}
+
+.wp-gcr-modal__field input,
+.wp-gcr-modal__field textarea,
+.wp-gcr-modal__field .form-select {
+  width: 100%;
+  padding: 0.4rem 0.65rem;
+  border: 1px solid #ced4da;
+  border-radius: 0.25rem;
+  background: #fff;
+  color: #212529;
+  font-size: 0.875rem;
+  font-family: inherit;
+}
+
+.wp-gcr-modal__field input,
+.wp-gcr-modal__field .form-select {
+  min-height: 2.15rem;
+}
+
+.wp-gcr-modal__field textarea {
+  resize: vertical;
+  min-height: 5rem;
+}
+
+.wp-gcr-modal__field input.is-invalid,
+.wp-gcr-modal__field textarea.is-invalid {
+  border-color: #dc3545;
+}
+
+.wp-gcr-modal__error {
+  color: #dc3545;
+  font-size: 0.75rem;
+  line-height: 1.3;
+}
+
+.wp-srm.wp-gcr-modal .wp-srm__footer {
+  flex-shrink: 0;
+  gap: 0.5rem;
+  padding: 0.7rem 1rem;
+  border-top: 1px solid #e9ecef;
+}
+
+@media (max-width: 575.98px) {
+  .wp-gcr-modal__grid {
+    grid-template-columns: 1fr;
+  }
+}

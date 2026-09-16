@@ -1,0 +1,74 @@
+.wp-ann button.wp-flat__stat {
+  appearance: none;
+  -webkit-appearance: none;
+  font: inherit;
+  color: inherit;
+  text-align: left;
+  width: 100%;
+  cursor: pointer;
+  background: #fff;
+  border: 1px solid #dee2e6;
+  border-left: 4px solid #6c757d;
+}
+
+.wp-ann button.wp-flat__stat--blue {
+  border-left-color: #1036c9;
+}
+
+.wp-ann button.wp-flat__stat--teal {
+  border-left-color: #0d9488;
+}
+
+.wp-ann button.wp-flat__stat:focus-visible {
+  outline: 2px solid #1036c9;
+  outline-offset: 2px;
+}
+
+.wp-ann .wp-flat__stat.is-selected {
+  border-color: #1036c9;
+  box-shadow: 0 0 0 2px rgba(16, 54, 201, 0.16);
+}
+
+.wp-ann .wp-flat__stat-label {
+  line-height: 1.3;
+  white-space: normal;
+}
+
+.wp-ann__preview {
+  margin-top: 0.15rem;
+  color: #64748b;
+  font-size: 0.78rem;
+  line-height: 1.4;
+  max-width: 42rem;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+.wp-ann__pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.12rem 0.5rem;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  border: 1px solid transparent;
+}
+
+.wp-ann__pill--published {
+  color: #0f5132;
+  background: #d1e7dd;
+  border-color: #badbcc;
+}
+
+.wp-ann__pill--draft {
+  color: #64748b;
+  background: #f1f5f9;
+  border-color: #e2e8f0;
+}
+
+.wp-ann__title-cell {
+  font-weight: 600;
+  color: #1f2937;
+}

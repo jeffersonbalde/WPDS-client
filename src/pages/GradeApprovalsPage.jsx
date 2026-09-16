@@ -1,79 +1,96 @@
-import { useEffect, useState } from 'react'
-import { FiTool } from 'react-icons/fi'
+import { useCallback, useEffect, useState } from 'react'
+import { FiRefreshCw } from 'react-icons/fi'
+import { toast } from 'react-toastify'
 import api from '../api/client'
-import './GradeApprovalsPage.css'
+import PageLoadingRow from '../components/common/PageLoadingRow'
+import GradeChangeReviewModal from '../components/grade-submissions/GradeChangeReviewModal'
+import { apiErrorMessage } from '../utils/apiError'
+import './StudentsManagePage.css'
 
-/**
- * Set to true when Grade Approvals is ready for the next phase.
- * Existing implementation is preserved in GradeApprovalsPageLive below.
- */
-const GRADE_APPROVALS_ENABLED = false
+const STATUS_TABS = [
+  { value: 'pending', label: 'Pending' },
+  { value: 'approved', label: 'Approved' },
+  { value: 'rejected', label: 'Rejected' },
+  { value: 'all', label: 'All' },
+]
+
+const PERIOD_LABEL = {
+  prelim: 'Prelim',
+  midterm: 'Midterm',
+  semi_final: 'Semi-Final',
+  final: 'Final',
+}
+
+function fmtGrade(value) {
+  if (value === null || value === undefined || value === '') return '—'
+  const n = Number(value)
+  return Number.isFinite(n) ? n.toFixed(2) : String(value)
+}
+
+function studentName(sp) {
+  if (!sp) return '—'
+  return `${sp.last_name || ''}, ${sp.first_name || ''}`.trim() || '—'
+}
 
 export default function GradeApprovalsPage() {
-  if (!GRADE_APPROVALS_ENABLED) {
-    return <GradeApprovalsComingSoon />
-  }
-
-  return <GradeApprovalsPageLive />
-}
-
-function GradeApprovalsComingSoon() {
-  return (
-    <div className="wp-grade-approvals">
-      <div className="wp-grade-approvals__header">
-        <h1 className="wp-grade-approvals__title">Grade Change Approvals</h1>
-        <p className="wp-grade-approvals__sub">
-          Registrar review for grade change requests from faculty.
-        </p>
-      </div>
-
-      <section className="wp-grade-approvals__placeholder" aria-live="polite">
-        <span className="wp-grade-approvals__placeholder-icon" aria-hidden>
-          <FiTool />
-        </span>
-        <h2 className="wp-grade-approvals__placeholder-title">Currently working</h2>
-        <p className="wp-grade-approvals__placeholder-text">
-          This module is under development and will be available in the next phase.
-        </p>
-      </section>
-    </div>
-  )
-}
-
-/** Full page — enable via GRADE_APPROVALS_ENABLED when ready. */
-function GradeApprovalsPageLive() {
   const [rows, setRows] = useState([])
-  const [message, setMessage] = useState('')
+  const [status, setStatus] = useState('pending')
+  const [loading, setLoading] = useState(true)
+  const [reviewRow, setReviewRow] = useState(null)
 
-  async function load() {
-    const { data } = await api.get('/grade-change-requests', { params: { status: 'pending' } })
-    setRows(data.data || data)
-  }
+  const load = useCallback(async () => {
+    setLoading(true)
+    try {
+      const { data } = await api.get('/grade-change-requests', { params: { status } })
+      setRows(data.data || data || [])
+    } catch (err) {
+      toast.error(apiErrorMessage(err, 'Failed to load grade change requests.'))
+    } finally {
+      setLoading(false)
+    }
+  }, [status])
 
   useEffect(() => {
     load()
-  }, [])
-
-  async function review(id, status) {
-    await api.post(`/grade-change-requests/${id}/review`, { status })
-    setMessage(`Request ${status}.`)
-    load()
-  }
+  }, [load])
 
   return (
-    <div className="wp-grade-approvals">
-      <div className="wp-grade-approvals__header">
-        <h1 className="wp-grade-approvals__title">Grade Change Approvals</h1>
-        <p className="wp-grade-approvals__sub">
-          Registrar may approve or reject only. Grade values are changed by teachers via requests.
-        </p>
+    <div className="wp-flat">
+      <div className="wp-flat__top">
+        <div>
+          <h1 className="wp-flat__title">Grade Change Approvals</h1>
+          <p className="wp-flat__sub">
+            Approve or reject grade change requests from teachers.
+          </p>
+        </div>
+        <div className="wp-flat__top-actions">
+          <button type="button" className="wp-flat__btn wp-flat__btn--secondary" onClick={load} disabled={loading}>
+            <FiRefreshCw className={loading ? 'is-spin' : ''} size={15} />
+            Refresh
+          </button>
+        </div>
       </div>
-      {message ? <p className="wp-grade-approvals__message">{message}</p> : null}
-      <div className="wp-grade-approvals__panel">
+
+      <div className="wp-flat__toolbar">
+        <select
+          className="form-select wp-flat__control"
+          value={status}
+          onChange={(e) => setStatus(e.target.value)}
+          aria-label="Filter by status"
+        >
+          {STATUS_TABS.map((t) => (
+            <option key={t.value} value={t.value}>{t.label}</option>
+          ))}
+        </select>
+      </div>
+
+      <div className="wp-flat__panel">
         <div className="table-responsive">
-          <table className="wp-grade-approvals__table">
+          <table className="wp-flat__table">
             <thead>
               <tr>
+                <th className="wp-flat__num">#</th>
+                <th>Actions</th>
                 <th>Teacher</th>
                 <th>Student</th>
                 <th>Subject</th>
@@ -81,38 +98,59 @@ function GradeApprovalsPageLive() {
                 <th>Old</th>
                 <th>New</th>
                 <th>Reason</th>
-                <th>Actions</th>
+                <th>Status</th>
               </tr>
             </thead>
             <tbody>
-              {rows.map((r) => (
-                <tr key={r.id}>
-                  <td>{r.requester?.name}</td>
-                  <td>{r.grade?.enrollment_subject?.admission?.student_profile?.last_name}</td>
-                  <td>{r.grade?.enrollment_subject?.class_section?.subject?.code}</td>
-                  <td>{r.period_field}</td>
-                  <td>{r.old_value}</td>
-                  <td>{r.new_value}</td>
-                  <td>{r.reason}</td>
-                  <td className="wp-grade-approvals__actions">
-                    <button type="button" className="btn btn-success" onClick={() => review(r.id, 'approved')}>
-                      Approve
-                    </button>
-                    <button type="button" className="btn btn-danger" onClick={() => review(r.id, 'rejected')}>
-                      Reject
-                    </button>
-                  </td>
-                </tr>
-              ))}
-              {rows.length === 0 ? (
-                <tr>
-                  <td colSpan={8} className="wp-grade-approvals__empty">No pending requests.</td>
-                </tr>
-              ) : null}
+              {loading ? (
+                <PageLoadingRow colSpan={10} message="Loading…" />
+              ) : rows.length === 0 ? (
+                <tr><td colSpan={10} className="wp-flat__empty">No grade change requests found.</td></tr>
+              ) : (
+                rows.map((r, idx) => {
+                  const sp = r.grade?.enrollment_subject?.admission?.student_profile
+                  const subjectCode = r.grade?.enrollment_subject?.class_section?.subject?.code
+                  return (
+                    <tr key={r.id}>
+                      <td className="wp-flat__num">{idx + 1}</td>
+                      <td>
+                        <div className="wp-flat__actions">
+                          <button
+                            type="button"
+                            className="wp-flat__btn wp-flat__btn--success wp-flat__btn--sm"
+                            onClick={() => setReviewRow(r)}
+                          >
+                            {r.status === 'pending' ? 'Review' : 'View'}
+                          </button>
+                        </div>
+                      </td>
+                      <td>{r.requester?.name || '—'}</td>
+                      <td>{studentName(sp)}</td>
+                      <td>{subjectCode || '—'}</td>
+                      <td>{PERIOD_LABEL[r.period_field] || r.period_field}</td>
+                      <td>{fmtGrade(r.old_value)}</td>
+                      <td>{fmtGrade(r.new_value)}</td>
+                      <td>{r.reason || '—'}</td>
+                      <td><span className="wp-flat__status">{String(r.status || '—').toUpperCase()}</span></td>
+                    </tr>
+                  )
+                })
+              )}
             </tbody>
           </table>
         </div>
       </div>
+
+      {reviewRow ? (
+        <GradeChangeReviewModal
+          request={reviewRow}
+          onClose={() => setReviewRow(null)}
+          onReviewed={() => {
+            setReviewRow(null)
+            load()
+          }}
+        />
+      ) : null}
     </div>
   )
 }

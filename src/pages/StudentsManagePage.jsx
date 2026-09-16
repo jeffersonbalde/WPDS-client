@@ -1,14 +1,22 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { FiPlus, FiRefreshCw, FiChevronLeft, FiChevronRight, FiChevronsLeft, FiChevronsRight, FiDownload } from 'react-icons/fi'
 import { toast } from 'react-toastify'
 import api from '../api/client'
+import FlatSearchSelect from '../components/common/FlatSearchSelect'
 import PageLoadingRow from '../components/common/PageLoadingRow'
 import StudentRecordModal from '../components/students/StudentRecordModal'
 import { apiErrorMessage } from '../utils/apiError'
 import { majorLabel } from '../utils/program'
 import { wpAlert, wpConfirm, wpWithLoading } from '../utils/wpSwal'
+import '../components/common/FlatSearchSelect.css'
 import './StudentsManagePage.css'
+
+function filterProgramBySearch(program, query) {
+  const code = String(program.code || '').toLowerCase()
+  const name = String(program.name || '').toLowerCase()
+  return code.includes(query) || name.includes(query)
+}
 
 function levelValue(level) {
   if (level && typeof level === 'object' && level.value) return String(level.value)
@@ -259,10 +267,19 @@ export default function StudentsManagePage() {
     }
   }
 
-  const filteredPrograms = programs.filter((p) => {
-    if (levelFilter === 'all') return true
-    return levelValue(p.academic_level) === levelFilter
-  })
+  const filteredPrograms = useMemo(() => {
+    if (levelFilter === 'all') return programs
+    return programs.filter((p) => levelValue(p.academic_level) === levelFilter)
+  }, [programs, levelFilter])
+
+  useEffect(() => {
+    if (programFilter === 'all') return
+    const stillVisible = filteredPrograms.some((p) => String(p.id) === String(programFilter))
+    if (!stillVisible) {
+      setProgramFilter('all')
+      setPage(1)
+    }
+  }, [filteredPrograms, programFilter])
 
   const pageItems = (() => {
     const total = meta.last_page || 1
@@ -372,24 +389,32 @@ export default function StudentsManagePage() {
           <option value="college">College</option>
           <option value="shs">Senior High</option>
         </select>
-        <select
-          className="form-select wp-flat__control"
-          value={programFilter}
-          onChange={(e) => {
-            setProgramFilter(e.target.value)
-            setPage(1)
-          }}
-          aria-label="Filter by program"
-        >
-          <option value="all">All programs</option>
-          {filteredPrograms.map((p) => (
-            <option key={p.id} value={p.id}>{p.code}</option>
-          ))}
-        </select>
+        <div className="wp-students__program-filter">
+          <FlatSearchSelect
+            allowEmpty
+            emptyOptionLabel="All programs"
+            options={filteredPrograms}
+            value={programFilter === 'all' ? '' : programFilter}
+            onChange={(v) => {
+              setProgramFilter(v || 'all')
+              setPage(1)
+            }}
+            disabled={loading}
+            placeholder="All programs"
+            searchPlaceholder="Search code or name…"
+            overlayPanel
+            getValue={(p) => p.id}
+            getLabel={(p) => p.code}
+            getMeta={(p) => p.name}
+            filterBySearch={filterProgramBySearch}
+            countLabel="program"
+            className="wp-students__program-select"
+          />
+        </div>
         <input
           type="search"
           className="form-control wp-flat__search"
-            placeholder="Search student no., name, or email…"
+          placeholder="Search student no., name, or email…"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
         />

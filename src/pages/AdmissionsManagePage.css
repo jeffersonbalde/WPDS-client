@@ -49,15 +49,50 @@
 }
 
 .wp-adm__term-filter {
-  flex: 0 1 22rem;
-  min-width: 16rem;
-  max-width: 26rem;
+  flex: 1 1 14rem;
+  min-width: 0;
+  max-width: 22rem;
+}
+
+.wp-adm__program-filter {
+  flex: 1 1 12rem;
+  min-width: 0;
+  max-width: 20rem;
+}
+
+.wp-adm__program-filter .wp-flat-search__count {
+  display: none;
+}
+
+.wp-adm__program-filter .wp-flat-search__trigger {
+  min-height: 2.15rem;
+  font-size: 0.875rem;
+}
+
+.wp-adm__program-filter .wp-flat-search__panel--overlay .wp-flat-search__option {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.12rem;
+  padding: 0.55rem 0.65rem;
+}
+
+.wp-adm__program-filter .wp-flat-search__panel--overlay .wp-flat-search__option-label {
+  white-space: normal;
+  line-height: 1.35;
+  font-weight: 500;
+}
+
+.wp-adm__program-filter .wp-flat-search__panel--overlay .wp-flat-search__option-meta {
+  max-width: none;
+  font-size: 0.72rem;
+  color: #64748b;
+  white-space: normal;
 }
 
 .wp-adm__status-filter {
-  flex: 0 1 11rem;
-  min-width: 9rem;
-  max-width: 13rem;
+  flex: 0 1 10rem;
+  min-width: 0;
+  max-width: 12rem;
 }
 
 .wp-adm__term-filter .wp-flat-search__count {
@@ -89,16 +124,38 @@
   white-space: normal;
 }
 
+/* Tablet and up: keep every filter + search + records on a single row. */
+@media (min-width: 768px) {
+  .wp-adm .wp-flat__toolbar {
+    flex-wrap: nowrap;
+  }
+
+  .wp-adm .wp-flat__search {
+    flex: 1 1 8rem;
+    min-width: 0;
+  }
+}
+
 @media (min-width: 992px) {
   .wp-adm__term-filter {
-    flex: 0 1 24rem;
-    min-width: 18rem;
-    max-width: 28rem;
+    flex: 1 1 16rem;
+    max-width: 24rem;
+  }
+
+  .wp-adm__program-filter {
+    flex: 1 1 14rem;
+    max-width: 20rem;
   }
 }
 
 @media (max-width: 767.98px) {
   .wp-adm__term-filter {
+    flex: 1 1 100%;
+    min-width: 0;
+    max-width: none;
+  }
+
+  .wp-adm__program-filter {
     flex: 1 1 100%;
     min-width: 0;
     max-width: none;

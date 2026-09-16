@@ -36,6 +36,12 @@ function filterTermBySearch(term, query) {
   return name.includes(query) || year.includes(query)
 }
 
+function filterProgramBySearch(program, query) {
+  const code = String(program.code || '').toLowerCase()
+  const name = String(program.name || '').toLowerCase()
+  return code.includes(query) || name.includes(query)
+}
+
 function admissionLabelHtml(admission) {
   const number = escapeHtml(admission?.admission_number || '—')
   const profile = admission?.student_profile
@@ -49,11 +55,14 @@ function admissionLabelHtml(admission) {
 export default function AdmissionsManagePage() {
   const [terms, setTerms] = useState([])
   const [loadingTerms, setLoadingTerms] = useState(true)
+  const [programs, setPrograms] = useState([])
+  const [loadingPrograms, setLoadingPrograms] = useState(true)
   const [rows, setRows] = useState([])
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState('')
   const [debouncedSearch, setDebouncedSearch] = useState('')
   const [termFilter, setTermFilter] = useState('all')
+  const [programFilter, setProgramFilter] = useState('all')
   const [statusFilter, setStatusFilter] = useState('all')
   const [page, setPage] = useState(1)
   const [perPage, setPerPage] = useState(10)
@@ -77,9 +86,10 @@ export default function AdmissionsManagePage() {
     const params = {}
     if (debouncedSearch) params.search = debouncedSearch
     if (termFilter !== 'all') params.school_term_id = termFilter
+    if (programFilter !== 'all') params.program_id = programFilter
     if (statusFilter !== 'all') params.status = statusFilter
     return params
-  }, [debouncedSearch, termFilter, statusFilter])
+  }, [debouncedSearch, termFilter, programFilter, statusFilter])
 
   const loadSummary = useCallback(async () => {
     try {
@@ -114,7 +124,21 @@ export default function AdmissionsManagePage() {
     }
   }, [])
 
+  const loadPrograms = useCallback(async () => {
+    setLoadingPrograms(true)
+    try {
+      const { data } = await api.get('/programs')
+      const list = Array.isArray(data) ? data : (data?.data || [])
+      setPrograms(list.filter((p) => p.is_active !== false))
+    } catch {
+      setPrograms([])
+    } finally {
+      setLoadingPrograms(false)
+    }
+  }, [])
+
   const termFilterOptions = useMemo(() => terms, [terms])
+  const programFilterOptions = useMemo(() => programs, [programs])
 
   const load = useCallback(async () => {
     setLoading(true)
@@ -143,8 +167,9 @@ export default function AdmissionsManagePage() {
 
   useEffect(() => {
     loadTerms()
+    loadPrograms()
     loadSummary()
-  }, [loadTerms, loadSummary])
+  }, [loadTerms, loadPrograms, loadSummary])
 
   useEffect(() => {
     load()
@@ -339,6 +364,28 @@ export default function AdmissionsManagePage() {
             getMeta={(t) => t.school_year}
             filterBySearch={filterTermBySearch}
             countLabel="term"
+          />
+        </div>
+        <div className="wp-adm__program-filter">
+          <FlatSearchSelect
+            allowEmpty
+            emptyOptionLabel="All programs"
+            loading={loadingPrograms}
+            options={programFilterOptions}
+            value={programFilter === 'all' ? '' : programFilter}
+            onChange={(v) => {
+              setProgramFilter(v || 'all')
+              setPage(1)
+            }}
+            disabled={pagerDisabled}
+            placeholder="All programs"
+            searchPlaceholder="Search program code or name"
+            overlayPanel
+            getValue={(p) => p.id}
+            getLabel={(p) => p.code}
+            getMeta={(p) => p.name}
+            filterBySearch={filterProgramBySearch}
+            countLabel="program"
           />
         </div>
         <select

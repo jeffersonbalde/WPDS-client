@@ -1,0 +1,232 @@
+.wp-notif {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.wp-notif__btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 999px;
+  background: #fff;
+  color: #334155;
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+
+.wp-notif__btn:hover,
+.wp-notif__btn.is-open {
+  background: #f1f5f9;
+  border-color: #cbd5e1;
+  color: #1036c9;
+}
+
+.wp-notif__badge {
+  position: absolute;
+  top: -0.15rem;
+  right: -0.15rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 1rem;
+  height: 1rem;
+  padding: 0 0.22rem;
+  border-radius: 999px;
+  background: #e11d48;
+  color: #fff;
+  font-size: 0.62rem;
+  font-weight: 700;
+  line-height: 1;
+  text-align: center;
+  border: 1.5px solid var(--topbar-bg, #fff);
+  font-variant-numeric: tabular-nums;
+  pointer-events: none;
+}
+
+.wp-notif__panel {
+  position: absolute;
+  top: calc(100% + 0.5rem);
+  right: 0;
+  width: min(22rem, calc(100vw - 2rem));
+  max-width: calc(100vw - 1.5rem);
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.5rem;
+  box-shadow: 0 12px 32px rgba(15, 23, 42, 0.16);
+  z-index: 1200;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Keep panel inside the viewport on narrow screens (bell is not at the right edge) */
+@media (max-width: 767.98px) {
+  .wp-notif__panel {
+    position: fixed;
+    top: calc(var(--topbar-height, 50px) + env(safe-area-inset-top, 0px) + 0.35rem);
+    left: 0.75rem;
+    right: 0.75rem;
+    width: auto;
+    max-width: none;
+    max-height: min(70dvh, 28rem);
+  }
+
+  .wp-notif__list {
+    max-height: min(52dvh, 18rem);
+  }
+}
+
+.wp-notif__panel-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.65rem 0.85rem;
+  border-bottom: 1px solid #eef2f6;
+}
+
+.wp-notif__panel-title {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #1e293b;
+}
+
+.wp-notif__link {
+  border: 0;
+  background: none;
+  color: #1036c9;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0.1rem 0.2rem;
+}
+
+.wp-notif__link:disabled {
+  color: #94a3b8;
+  cursor: default;
+}
+
+.wp-notif__list {
+  max-height: 22rem;
+  overflow-y: auto;
+}
+
+.wp-notif__empty {
+  margin: 0;
+  padding: 1.5rem 1rem;
+  text-align: center;
+  color: #94a3b8;
+  font-size: 0.85rem;
+}
+
+.wp-notif__item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.6rem;
+  width: 100%;
+  padding: 0.7rem 0.85rem;
+  border: 0;
+  border-bottom: 1px solid #f1f5f9;
+  background: #fff;
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.12s ease;
+}
+
+.wp-notif__item:hover {
+  background: #f8fafc;
+}
+
+.wp-notif__item.is-unread {
+  background: #eff4ff;
+}
+
+.wp-notif__item.is-unread:hover {
+  background: #e5edff;
+}
+
+.wp-notif__item-icon {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.9rem;
+  height: 1.9rem;
+  border-radius: 999px;
+  background: #f1f5f9;
+  color: #475569;
+}
+
+.wp-notif__item-icon--success {
+  background: #d1fae5;
+  color: #047857;
+}
+
+.wp-notif__item-icon--danger {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+
+.wp-notif__item-icon--warn {
+  background: #fef3c7;
+  color: #b45309;
+}
+
+.wp-notif__item-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  min-width: 0;
+  flex: 1 1 auto;
+}
+
+.wp-notif__item-title {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #1e293b;
+}
+
+.wp-notif__item-text {
+  font-size: 0.8rem;
+  color: #475569;
+  line-height: 1.4;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.wp-notif__item-time {
+  font-size: 0.72rem;
+  color: #94a3b8;
+  margin-top: 0.1rem;
+}
+
+.wp-notif__dot {
+  flex-shrink: 0;
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 999px;
+  background: #1036c9;
+  margin-top: 0.35rem;
+}
+
+.wp-notif__see-all {
+  border: 0;
+  border-top: 1px solid #eef2f6;
+  background: #fff;
+  color: #1036c9;
+  font-size: 0.82rem;
+  font-weight: 600;
+  padding: 0.65rem;
+  cursor: pointer;
+  transition: background 0.12s ease;
+}
+
+.wp-notif__see-all:hover {
+  background: #f8fafc;
+}

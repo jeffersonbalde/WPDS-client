@@ -14,7 +14,19 @@ import {
   FiTool,
   FiUserPlus,
   FiList,
+  FiInbox,
+  FiSend,
+  FiBarChart2,
+  FiPieChart,
+  FiActivity,
+  FiBell,
 } from 'react-icons/fi'
+
+/**
+ * Temporary: hide Activity Log from IT / admin / stakeholder nav + quick access.
+ * Keep the page + route + API — flip to true when the client wants this feature.
+ */
+export const ACTIVITY_LOG_NAV_ENABLED = false
 
 /**
  * @typedef {{ to: string, label: string, end?: boolean, icon: import('react').ComponentType }} NavLinkItem
@@ -46,24 +58,32 @@ const studentSections = [
 /** @type {Record<string, NavSection[]>} */
 const byRole = {
   student: studentSections,
-  alumni: studentSections,
   teacher: [
     {
       heading: 'Main',
-      items: [{ to: '/', label: 'Dashboard', end: true, icon: FiHome }],
+      items: [
+        { to: '/', label: 'Dashboard', end: true, icon: FiHome },
+        { to: '/notifications', label: 'Notifications', icon: FiBell },
+        { to: '/my-profile', label: 'My Profile', icon: FiUser },
+      ],
     },
     {
       heading: 'Grades',
       items: [
         { to: '/classes', label: 'My Classes', icon: FiLayers },
+        { to: '/grade-submissions', label: 'Grade Submissions', icon: FiSend },
         { to: '/grade-changes', label: 'Grade Change Requests', icon: FiEdit3 },
       ],
     },
-  ],  
+  ],
   registrar: [
     {
       heading: 'Main',
-      items: [{ to: '/', label: 'Dashboard', end: true, icon: FiHome }],
+      items: [
+        { to: '/', label: 'Dashboard', end: true, icon: FiHome },
+        { to: '/notifications', label: 'Notifications', icon: FiBell },
+        { to: '/my-profile', label: 'My Profile', icon: FiUser },
+      ],
     },
     {
       heading: 'Academic Records',
@@ -95,7 +115,16 @@ const byRole = {
     },
     {
       heading: 'Approvals',
-      items: [{ to: '/grade-approvals', label: 'Grade Approvals', icon: FiCheckSquare }],
+      items: [
+        { to: '/grade-submissions-review', label: 'Grade Submissions', icon: FiInbox },
+        { to: '/grade-approvals', label: 'Grade Change Approvals', icon: FiCheckSquare },
+      ],
+    },
+    {
+      heading: 'Communication',
+      items: [
+        { to: '/announcements', label: 'Announcements', icon: FiBell },
+      ],
     },
   ],
   it: [
@@ -107,17 +136,31 @@ const byRole = {
       heading: 'System',
       items: [
         { to: '/users', label: 'User Management', icon: FiUsers },
-        { to: '/system', label: 'System Maintenance', icon: FiTool },
+        { to: '/system', label: 'Backup & Security', icon: FiTool },
+        ...(ACTIVITY_LOG_NAV_ENABLED
+          ? [{ to: '/activity-log', label: 'Activity Log', icon: FiActivity }]
+          : []),
       ],
     },
   ],
   admin: [
     {
       heading: 'Main',
-      items: [{ to: '/', label: 'Dashboard', end: true, icon: FiHome }],
+      items: [
+        { to: '/', label: 'Dashboard', end: true, icon: FiHome },
+        { to: '/my-profile', label: 'My Profile', icon: FiUser },
+      ],
     },
     {
-      heading: 'Monitoring',
+      heading: 'Reports',
+      items: [
+        { to: '/reports/population', label: 'Student Population', icon: FiUsers },
+        { to: '/reports/performance', label: 'Academic Performance', icon: FiBarChart2 },
+        { to: '/reports/grade-operations', label: 'Grade Operations', icon: FiPieChart },
+      ],
+    },
+    {
+      heading: 'Directory',
       items: [
         { to: '/monitor/students', label: 'Students', icon: FiUsers },
         { to: '/monitor/teachers', label: 'Teachers', icon: FiUser },
@@ -125,14 +168,31 @@ const byRole = {
         { to: '/monitor/subjects', label: 'Subjects', icon: FiBook },
       ],
     },
+    ...(ACTIVITY_LOG_NAV_ENABLED
+      ? [{
+          heading: 'Oversight',
+          items: [{ to: '/activity-log', label: 'Activity Log', icon: FiActivity }],
+        }]
+      : []),
   ],
   stakeholder: [
     {
       heading: 'Main',
-      items: [{ to: '/', label: 'Dashboard', end: true, icon: FiHome }],
+      items: [
+        { to: '/', label: 'Dashboard', end: true, icon: FiHome },
+        { to: '/my-profile', label: 'My Profile', icon: FiUser },
+      ],
     },
     {
-      heading: 'Oversight',
+      heading: 'Reports',
+      items: [
+        { to: '/reports/population', label: 'Student Population', icon: FiUsers },
+        { to: '/reports/performance', label: 'Academic Performance', icon: FiBarChart2 },
+        { to: '/reports/grade-operations', label: 'Grade Operations', icon: FiPieChart },
+      ],
+    },
+    {
+      heading: 'Directory',
       items: [
         { to: '/monitor/students', label: 'Students', icon: FiUsers },
         { to: '/monitor/teachers', label: 'Teachers', icon: FiUser },
@@ -140,6 +200,12 @@ const byRole = {
         { to: '/monitor/subjects', label: 'Subjects', icon: FiBook },
       ],
     },
+    ...(ACTIVITY_LOG_NAV_ENABLED
+      ? [{
+          heading: 'Oversight',
+          items: [{ to: '/activity-log', label: 'Activity Log', icon: FiActivity }],
+        }]
+      : []),
   ],
 }
 
@@ -204,7 +270,6 @@ export function isChildActive(pathname, child) {
 export function roleLabel(role) {
   const map = {
     student: 'Student',
-    alumni: 'Alumni',
     teacher: 'Teacher',
     registrar: 'Registrar',
     it: 'IT Administrator',

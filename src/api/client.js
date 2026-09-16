@@ -13,6 +13,12 @@ api.interceptors.request.use((config) => {
   if (token) {
     config.headers.Authorization = `Bearer ${token}`
   }
+  if (config.data instanceof FormData) {
+    // Let the browser set "multipart/form-data; boundary=..." itself —
+    // the instance's default "application/json" would otherwise mislabel
+    // the multipart body and Laravel would never see the uploaded file.
+    delete config.headers['Content-Type']
+  }
   return config
 })
 

@@ -1,0 +1,146 @@
+.wp-notifpage__tabs {
+  display: flex;
+  gap: 0.35rem;
+  margin-bottom: 0.85rem;
+}
+
+.wp-notifpage__tab {
+  border: 1px solid #dee2e6;
+  background: #fff;
+  color: #475569;
+  font-size: 0.82rem;
+  font-weight: 600;
+  padding: 0.4rem 0.9rem;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: background 0.12s ease, border-color 0.12s ease, color 0.12s ease;
+}
+
+.wp-notifpage__tab:hover {
+  background: #f8fafc;
+}
+
+.wp-notifpage__tab.is-active {
+  background: #1036c9;
+  border-color: #1036c9;
+  color: #fff;
+}
+
+.wp-notifpage__list {
+  display: flex;
+  flex-direction: column;
+}
+
+.wp-notifpage__empty {
+  margin: 0;
+  padding: 2.5rem 1rem;
+  text-align: center;
+  color: #94a3b8;
+  font-size: 0.9rem;
+}
+
+.wp-notifpage__item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  width: 100%;
+  padding: 0.9rem 1rem;
+  border: 0;
+  border-bottom: 1px solid #f1f5f9;
+  background: #fff;
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.12s ease;
+}
+
+.wp-notifpage__item:last-child {
+  border-bottom: 0;
+}
+
+.wp-notifpage__item:hover {
+  background: #f8fafc;
+}
+
+.wp-notifpage__item.is-unread {
+  background: #eff4ff;
+}
+
+.wp-notifpage__item.is-unread:hover {
+  background: #e5edff;
+}
+
+.wp-notifpage__icon {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.35rem;
+  height: 2.35rem;
+  border-radius: 999px;
+  background: #f1f5f9;
+  color: #475569;
+}
+
+.wp-notifpage__icon--success {
+  background: #d1fae5;
+  color: #047857;
+}
+
+.wp-notifpage__icon--danger {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+
+.wp-notifpage__icon--warn {
+  background: #fef3c7;
+  color: #b45309;
+}
+
+.wp-notifpage__body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  min-width: 0;
+  flex: 1 1 auto;
+}
+
+.wp-notifpage__row1 {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.wp-notifpage__item-title {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: #1e293b;
+}
+
+.wp-notifpage__item-time {
+  flex-shrink: 0;
+  font-size: 0.74rem;
+  color: #94a3b8;
+}
+
+.wp-notifpage__item-text {
+  font-size: 0.85rem;
+  color: #475569;
+  line-height: 1.5;
+}
+
+.wp-notifpage__cta {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #1036c9;
+  margin-top: 0.15rem;
+}
+
+.wp-notifpage__dot {
+  flex-shrink: 0;
+  width: 0.55rem;
+  height: 0.55rem;
+  border-radius: 999px;
+  background: #1036c9;
+  margin-top: 0.5rem;
+}

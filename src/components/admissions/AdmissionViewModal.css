@@ -93,7 +93,7 @@
 }
 
 .wp-adm-view-modal__panel-title {
-  margin: 0;
+  margin: 0 0 0.65rem;
   font-size: 0.72rem;
   font-weight: 700;
   letter-spacing: 0.04em;
@@ -102,11 +102,22 @@
   line-height: 1.2;
 }
 
+.wp-adm-view-modal__panel-head .wp-adm-view-modal__panel-title {
+  margin-bottom: 0;
+}
+
 .wp-adm-view-modal__units {
   font-size: 0.8125rem;
   font-weight: 500;
   color: #495057;
   white-space: nowrap;
+}
+
+.wp-adm-view-modal__grade-note {
+  margin: 0 0 0.65rem;
+  font-size: 0.78rem;
+  color: #6c757d;
+  line-height: 1.4;
 }
 
 .wp-adm-view-modal__fields {

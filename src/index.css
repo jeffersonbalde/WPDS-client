@@ -1,5 +1,9 @@
 @import "tailwindcss";
 
+@theme {
+  --font-sans: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+
 :root {
   /* West Prime official brand colors (from logo) */
   --wp-blue: #1036c9;
@@ -8,15 +12,23 @@
   --sidebar: #2c2c2c;
   --sidebar-hover: #3a3a3a;
   --sidebar-active: #f5f5f5;
+  --wp-font: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  /* Keep Bootstrap controls on the same typeface as the rest of the portal */
+  --bs-font-sans-serif: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --bs-body-font-family: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
 }
 
 * {
   box-sizing: border-box;
 }
 
+html {
+  font-family: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+
 body {
   margin: 0;
-  font-family: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  font-family: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif !important;
   font-feature-settings: "cv02", "cv03", "cv04", "cv11";
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -26,4 +38,55 @@ body {
 
 #root {
   min-height: 100vh;
+  font-family: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+
+button,
+input,
+select,
+textarea,
+.form-control,
+.form-select,
+.btn,
+table,
+th,
+td,
+.wp-flat,
+.wp-profile,
+.wp-home,
+.wp-dash,
+.wp-curr,
+.wp-srm,
+.wp-users {
+  font-family: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif !important;
+}
+
+/* Page headers — keep flat titles consistent across roles (beat Bootstrap h1 RFS) */
+h1.wp-flat__title,
+h1.wp-home__title,
+h1.wp-profile__title,
+h1.wp-users__title {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 700;
+  line-height: 1.3;
+  color: #1e293b;
+  font-family: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif !important;
+}
+
+p.wp-flat__sub,
+p.wp-home__sub,
+p.wp-profile__sub,
+p.wp-users__sub,
+.wp-flat__sub,
+.wp-home__sub,
+.wp-profile__sub,
+.wp-users__sub {
+  margin: 0.4rem 0 0;
+  font-size: 0.9rem;
+  font-weight: 400;
+  color: #64748b;
+  max-width: 40rem;
+  line-height: 1.45;
+  font-family: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif !important;
 }

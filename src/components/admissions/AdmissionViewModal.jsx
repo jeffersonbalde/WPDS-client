@@ -184,6 +184,10 @@ export default function AdmissionViewModal({ admissionId, onClose }) {
                   <h3 className="wp-adm-view-modal__panel-title">Enrolled subjects</h3>
                   <span className="wp-adm-view-modal__units">Total units: {totalUnits.toFixed(1)}</span>
                 </div>
+                <p className="wp-adm-view-modal__grade-note">
+                  A period grade shows here only after the Registrar releases it. A blank Final Grade
+                  means not all periods are released yet.
+                </p>
 
                 <div className="wp-flat__panel wp-adm-view-modal__table-panel">
                   <div className="table-responsive wp-adm-view-modal__table-scroll">

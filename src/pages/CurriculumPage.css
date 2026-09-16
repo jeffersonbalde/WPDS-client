@@ -1,0 +1,105 @@
+.wp-curr,
+.wp-curr .wp-flat__table,
+.wp-curr .wp-flat__control,
+.wp-curr .form-control,
+.wp-curr .form-select {
+  font-family: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+
+.wp-curr .wp-flat__stats {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+@media (max-width: 991.98px) {
+  .wp-curr .wp-flat__stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.wp-curr__course-picker {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  margin: 0;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #475569;
+  flex: 1 1 22rem;
+  min-width: 0;
+  max-width: 34rem;
+}
+
+.wp-curr__course-picker .wp-flat__control {
+  flex: 1 1 auto;
+  min-width: 0;
+  max-width: none;
+}
+
+.wp-curr__note {
+  border: 1px solid #fde68a;
+  background: #fffbeb;
+  color: #92400e;
+  border-radius: 0.25rem;
+  padding: 0.55rem 0.85rem;
+  font-size: 0.82rem;
+  line-height: 1.4;
+}
+
+.wp-curr__table {
+  min-width: 60rem;
+}
+
+.wp-curr__code {
+  font-weight: 600;
+  color: #1f2937;
+  white-space: nowrap;
+}
+
+.wp-curr__taken {
+  color: #64748b;
+  font-size: 0.83rem;
+}
+
+.wp-curr__grade {
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+  color: #1f2937;
+  white-space: nowrap;
+}
+
+.wp-curr__pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.1rem 0.5rem;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  border: 1px solid transparent;
+  white-space: nowrap;
+}
+
+.wp-curr__pill--pass {
+  color: #0f5132;
+  background: #d1e7dd;
+  border-color: #badbcc;
+}
+
+.wp-curr__pill--fail {
+  color: #842029;
+  background: #f8d7da;
+  border-color: #f5c2c7;
+}
+
+.wp-curr__pill--muted {
+  color: #475569;
+  background: #f1f5f9;
+  border-color: #e2e8f0;
+}
+
+@media (max-width: 767.98px) {
+  .wp-curr__course-picker {
+    flex: 1 1 100%;
+    max-width: none;
+  }
+}

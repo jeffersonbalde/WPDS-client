@@ -3,6 +3,9 @@ import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom'
 import { FiLogOut, FiMenu, FiChevronDown } from 'react-icons/fi'
 import { toast } from 'react-toastify'
 import { useAuth } from '../context/AuthContext'
+import { NotificationsProvider } from '../context/NotificationsContext'
+import NotificationBell from '../components/notifications/NotificationBell'
+import NotifNavBadge from '../components/notifications/NotifNavBadge'
 import { getNavForRole, isChildActive, isGroupActive, isNavGroup } from './nav'
 import { wpAlert, wpClose, wpConfirm, wpLoading } from '../utils/wpSwal'
 import logo from '../assets/west_prime_logo.png'
@@ -28,6 +31,7 @@ export default function DashboardLayout() {
   const [openGroups, setOpenGroups] = useState({})
   const menuRef = useRef(null)
   const sections = getNavForRole(user?.role)
+  const notificationsEnabled = ['teacher', 'registrar'].includes(user?.role)
 
   useEffect(() => {
     localStorage.removeItem('wpds_dash_theme')
@@ -122,6 +126,7 @@ export default function DashboardLayout() {
   }
 
   return (
+    <NotificationsProvider enabled={notificationsEnabled}>
     <div className={`wp-dash${collapsed ? ' is-collapsed' : ''}`}>
       <div
         className="wp-dash__overlay"
@@ -210,6 +215,7 @@ export default function DashboardLayout() {
                       <Icon />
                     </span>
                     <span>{item.label}</span>
+                    {item.to === '/notifications' ? <NotifNavBadge /> : null}
                   </NavLink>
                 )
               })}
@@ -230,6 +236,7 @@ export default function DashboardLayout() {
           </button>
 
           <div className="wp-dash__top-actions">
+            {notificationsEnabled ? <NotificationBell /> : null}
             <div className="wp-dash__user-wrap" ref={menuRef}>
               <button
                 type="button"
@@ -237,7 +244,13 @@ export default function DashboardLayout() {
                 aria-expanded={menuOpen}
                 onClick={() => setMenuOpen((v) => !v)}
               >
-                <span className="wp-dash__avatar">{initials(user?.name)}</span>
+                <span className="wp-dash__avatar">
+                  {user?.avatar_url ? (
+                    <img src={user.avatar_url} alt="" className="wp-dash__avatar-img" />
+                  ) : (
+                    initials(user?.name)
+                  )}
+                </span>
                 <span className="wp-dash__user-name" title={user?.name || 'User'}>
                   {user?.name || 'User'}
                 </span>
@@ -271,5 +284,6 @@ export default function DashboardLayout() {
         </footer>
       </div>
     </div>
+    </NotificationsProvider>
   )
 }
