@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useId, useMemo, useRef, useState } from 'react'
+import { createPortal } from 'react-dom'
 import { Link } from 'react-router-dom'
 import { FiArrowLeft, FiX } from 'react-icons/fi'
 import { toast } from 'react-toastify'
@@ -235,9 +236,9 @@ export default function StudentRecordModal({ studentId, onClose }) {
 
   const animClass = anim === 'open' ? ' is-open' : anim === 'leave' ? ' is-leave' : ''
 
-  return (
+  return createPortal(
     <div
-      className={`wp-srm${animClass}`}
+      className={`wp-srm wp-srm--student${animClass}`}
       role="presentation"
       onMouseDown={(e) => {
         if (e.target === e.currentTarget) requestClose()
@@ -250,67 +251,60 @@ export default function StudentRecordModal({ studentId, onClose }) {
         aria-labelledby={titleId}
       >
         <header className="wp-srm__header">
-          <div className="wp-srm__header-top">
-            <div className="wp-srm__identity">
-              {hasPhoto ? (
-                <button
-                  type="button"
-                  className="wp-srm__avatar wp-srm__avatar--btn has-photo"
-                  onClick={() => setPhotoOpen(true)}
-                  title="View photo"
-                  aria-label={`View photo of ${displayName || 'student'}`}
-                >
-                  <Avatar src={avatarUrl} name={displayName || 'Student'} />
-                  <span className="wp-srm__avatar-hint" aria-hidden>View</span>
-                </button>
-              ) : (
-                <div className="wp-srm__avatar" aria-hidden={loading || !profile}>
-                  <Avatar src={null} name={displayName || (loading ? '' : 'Student')} />
-                </div>
-              )}
-              <div className="wp-srm__header-main">
-                <p className="wp-srm__eyebrow">Student record</p>
-                <h2 id={titleId} className="wp-srm__title">
-                  {loading ? 'Loading…' : displayName || 'Student'}
-                </h2>
-                <div className="wp-srm__meta" aria-hidden={loading || !profile}>
-                  {loading || !profile ? (
-                    <>
-                      <span className="wp-srm__chip wp-srm__chip--skeleton" />
-                      <span className="wp-srm__chip wp-srm__chip--skeleton is-short" />
-                    </>
-                  ) : (
-                    <>
-                      <span className="wp-srm__chip">{profile.student_no}</span>
-                      <span className="wp-srm__chip">{levelLabel(profile.academic_level)}</span>
-                    </>
-                  )}
-                </div>
-              </div>
-            </div>
-            <div className="wp-srm__header-actions">
+          <div className="wp-srm__identity">
+            {hasPhoto ? (
               <button
                 type="button"
-                className="wp-srm__icon-btn"
-                onClick={requestClose}
-                aria-label="Close"
+                className="wp-srm__avatar wp-srm__avatar--btn has-photo"
+                onClick={() => setPhotoOpen(true)}
+                title="View photo"
+                aria-label={`View photo of ${displayName || 'student'}`}
               >
-                <FiX size={20} />
+                <Avatar src={avatarUrl} name={displayName || 'Student'} />
+                <span className="wp-srm__avatar-hint" aria-hidden>View</span>
               </button>
+            ) : (
+              <div className="wp-srm__avatar" aria-hidden={loading || !profile}>
+                <Avatar src={null} name={displayName || (loading ? '' : 'Student')} />
+              </div>
+            )}
+            <div className="wp-srm__header-main">
+              <p className="wp-srm__eyebrow">Student record</p>
+              <h2 id={titleId} className="wp-srm__title">
+                {loading ? 'Loading…' : displayName || 'Student'}
+              </h2>
+              <div className="wp-srm__meta" aria-hidden={loading || !profile}>
+                {loading || !profile ? (
+                  <>
+                    <span className="wp-srm__chip wp-srm__chip--skeleton" />
+                    <span className="wp-srm__chip wp-srm__chip--skeleton is-short" />
+                  </>
+                ) : (
+                  <>
+                    <span className="wp-srm__chip">{profile.student_no}</span>
+                    <span className="wp-srm__chip">{levelLabel(profile.academic_level)}</span>
+                  </>
+                )}
+              </div>
+              {!loading && profile ? (
+                <p className="wp-srm__dates">
+                  <span>Registered {formatDateTime(profile.created_at)}</span>
+                  <span className="wp-srm__dates-sep" aria-hidden>·</span>
+                  <span>Updated {formatDateTime(profile.updated_at)}</span>
+                </p>
+              ) : null}
             </div>
           </div>
-          {!loading && profile ? (
-            <dl className="wp-srm__timestamps">
-              <div className="wp-srm__timestamp">
-                <dt className="wp-srm__timestamp-label">Registered</dt>
-                <dd className="wp-srm__timestamp-value">{formatDateTime(profile.created_at)}</dd>
-              </div>
-              <div className="wp-srm__timestamp">
-                <dt className="wp-srm__timestamp-label">Last updated</dt>
-                <dd className="wp-srm__timestamp-value">{formatDateTime(profile.updated_at)}</dd>
-              </div>
-            </dl>
-          ) : null}
+          <div className="wp-srm__header-actions">
+            <button
+              type="button"
+              className="wp-srm__icon-btn"
+              onClick={requestClose}
+              aria-label="Close"
+            >
+              <FiX size={20} />
+            </button>
+          </div>
         </header>
 
         <nav className="wp-srm__tabs" aria-label="Record sections">
@@ -557,6 +551,7 @@ export default function StudentRecordModal({ studentId, onClose }) {
         title={displayName || 'Photo'}
         onClose={() => setPhotoOpen(false)}
       />
-    </div>
+    </div>,
+    document.body,
   )
 }

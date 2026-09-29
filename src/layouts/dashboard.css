@@ -344,25 +344,44 @@
 }
 
 .wp-dash__avatar {
-  width: 30px;
-  height: 30px;
+  width: 2rem;
+  height: 2rem;
   border-radius: 50%;
   background: var(--avatar-bg);
   color: var(--avatar-text);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 0.75rem;
+  display: grid;
+  place-items: center;
+  font-size: 0.68rem;
   font-weight: 700;
   flex-shrink: 0;
   border: 1px solid var(--avatar-border);
   overflow: hidden;
+  line-height: 1;
 }
 
-.wp-dash__avatar-img {
+.wp-dash__avatar .wp-avatar--photo {
   width: 100%;
   height: 100%;
+  border-radius: 50%;
   object-fit: cover;
+  object-position: center;
+  display: block;
+}
+
+.wp-dash__avatar .wp-avatar--fallback {
+  width: 100%;
+  height: 100%;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+}
+
+@media (min-width: 480px) {
+  .wp-dash__avatar {
+    width: 2.125rem;
+    height: 2.125rem;
+    font-size: 0.72rem;
+  }
 }
 
 .wp-dash__user-name {

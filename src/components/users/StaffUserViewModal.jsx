@@ -195,9 +195,11 @@ export default function StaffUserViewModal({ userId, onClose, baseUrl = '/users'
               ) : null}
             </div>
           </div>
-          <button type="button" className="wp-srm__icon-btn" onClick={requestClose} aria-label="Close">
-            <FiX size={18} />
-          </button>
+          <div className="wp-srm__header-actions">
+            <button type="button" className="wp-srm__icon-btn" onClick={requestClose} aria-label="Close">
+              <FiX size={18} />
+            </button>
+          </div>
         </header>
 
         <div className="wp-srm__body wp-svm__body">
