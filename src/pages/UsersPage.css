@@ -68,17 +68,28 @@
 .wp-users__card--admin { border-top-color: #7c3aed; }
 .wp-users__card--stakeholder { border-top-color: #0ea5e9; }
 
-/* Full-width photo — consistent square across every card */
+/* Full-width photo — click to view (upload is via Edit) */
 .wp-users__card-avatar-wrap {
   position: relative;
   display: block;
   width: 100%;
   margin: 0;
+  padding: 0;
+  border: none;
   border-radius: 0;
+  background: transparent;
+  cursor: default;
+  text-align: inherit;
+  font: inherit;
+  color: inherit;
 }
 
-label.wp-users__card-avatar-wrap {
-  cursor: pointer;
+.wp-users__card-avatar-wrap.has-photo {
+  cursor: zoom-in;
+}
+
+.wp-users__card-avatar-wrap:disabled {
+  cursor: default;
 }
 
 .wp-users__card-avatar {
@@ -98,7 +109,6 @@ label.wp-users__card-avatar-wrap {
   overflow: hidden;
   border: none;
   border-bottom: 1px solid #dee2e6;
-  transition: filter 0.15s ease;
 }
 
 .wp-users__card-avatar img {
@@ -107,14 +117,10 @@ label.wp-users__card-avatar-wrap {
   object-fit: cover;
   object-position: center top;
   display: block;
+  transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1), filter 0.3s ease;
 }
 
-label.wp-users__card-avatar-wrap:hover .wp-users__card-avatar {
-  filter: brightness(0.92);
-}
-
-label.wp-users__card-avatar-wrap:hover .wp-users__card-avatar::after {
-  content: "Change photo";
+.wp-users__card-avatar-hint {
   position: absolute;
   left: 0;
   right: 0;
@@ -126,20 +132,30 @@ label.wp-users__card-avatar-wrap:hover .wp-users__card-avatar::after {
   font-weight: 600;
   letter-spacing: 0.02em;
   text-align: center;
+  opacity: 0;
+  transform: translateY(6px);
+  transition: opacity 0.25s ease, transform 0.25s ease;
+  pointer-events: none;
 }
 
-.wp-users__card-avatar-busy {
-  position: absolute;
-  inset: 0;
-  border-radius: 0;
-  background: rgba(255, 255, 255, 0.72);
-  border: 3px solid transparent;
-  border-top-color: #1036c9;
-  animation: wp-users-spin 0.7s linear infinite;
+.wp-users__card-avatar-wrap.has-photo:hover .wp-users__card-avatar img,
+.wp-users__card-avatar-wrap.has-photo:focus-visible .wp-users__card-avatar img {
+  transform: scale(1.05);
+  filter: brightness(0.96);
 }
 
-@keyframes wp-users-spin {
-  to { transform: rotate(360deg); }
+.wp-users__card-avatar-wrap.has-photo:hover .wp-users__card-avatar-hint,
+.wp-users__card-avatar-wrap.has-photo:focus-visible .wp-users__card-avatar-hint {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.wp-users__card-avatar-wrap:focus-visible {
+  outline: none;
+}
+
+.wp-users__card-avatar-wrap.has-photo:focus-visible .wp-users__card-avatar {
+  box-shadow: inset 0 0 0 3px rgba(16, 54, 201, 0.45);
 }
 
 .wp-users__card-body {

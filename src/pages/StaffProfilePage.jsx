@@ -1,6 +1,7 @@
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 import { useAuth } from '../context/AuthContext'
 import Avatar from '../components/common/Avatar'
+import PhotoLightbox from '../components/common/PhotoLightbox'
 import '../components/admissions/AdmissionViewModal.css'
 import './StaffProfilePage.css'
 
@@ -21,6 +22,7 @@ function fmtDateTime(value) {
 export default function StaffProfilePage() {
   const { user } = useAuth()
   const staff = user?.staff_profile
+  const [photoOpen, setPhotoOpen] = useState(false)
 
   const accountFields = useMemo(() => {
     if (!user) return []
@@ -48,6 +50,8 @@ export default function StaffProfilePage() {
 
   if (!user) return null
 
+  const hasPhoto = Boolean(user.avatar_url)
+
   return (
     <div className="wp-flat">
       <div className="wp-flat__top">
@@ -59,21 +63,40 @@ export default function StaffProfilePage() {
         </div>
       </div>
 
-      <div className="wp-flat__panel">
-        <div className="wp-sprofile__header">
-          <div className="wp-sprofile__avatar">
-            <Avatar src={user.avatar_url} name={user.name} />
-          </div>
-          <div>
+      <div className="wp-flat__panel wp-sprofile">
+        <header className="wp-sprofile__header">
+          {hasPhoto ? (
+            <button
+              type="button"
+              className="wp-sprofile__photo has-photo"
+              onClick={() => setPhotoOpen(true)}
+              title="View photo"
+              aria-label={`View photo of ${user.name || 'you'}`}
+            >
+              <Avatar src={user.avatar_url} name={user.name} />
+              <span className="wp-sprofile__photo-hint" aria-hidden>View photo</span>
+            </button>
+          ) : (
+            <div className="wp-sprofile__photo" aria-hidden>
+              <Avatar src={null} name={user.name} />
+            </div>
+          )}
+
+          <div className="wp-sprofile__identity">
+            <p className="wp-sprofile__eyebrow">My profile</p>
             <h2 className="wp-sprofile__name">{user.name}</h2>
             <div className="wp-sprofile__pills">
               <span className="wp-sprofile__pill">{user.role_label || user.role}</span>
-              <span className={`wp-sprofile__pill${user.is_active ? ' wp-sprofile__pill--active' : ' wp-sprofile__pill--inactive'}`}>
+              <span className={`wp-sprofile__pill${user.is_active ? ' is-active' : ' is-inactive'}`}>
                 {user.is_active ? 'Active' : 'Inactive'}
               </span>
+              {staff?.employee_no ? (
+                <span className="wp-sprofile__pill is-id">Emp: {staff.employee_no}</span>
+              ) : null}
             </div>
+            {user.email ? <p className="wp-sprofile__email">{user.email}</p> : null}
           </div>
-        </div>
+        </header>
 
         <div className="wp-sprofile__body">
           <section className="wp-adm-view-modal__panel" aria-label="Account details">
@@ -107,6 +130,12 @@ export default function StaffProfilePage() {
           </section>
         </div>
       </div>
+
+      <PhotoLightbox
+        src={photoOpen && user.avatar_url ? user.avatar_url : null}
+        title={user.name || 'Photo'}
+        onClose={() => setPhotoOpen(false)}
+      />
     </div>
   )
 }

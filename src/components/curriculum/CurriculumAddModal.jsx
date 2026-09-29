@@ -8,6 +8,7 @@ import { wpConfirm, wpConfirmDiscard } from '../../utils/wpSwal'
 import '../common/FlatSearchSelect.css'
 import '../students/StudentRecordModal.css'
 import './CurriculumAddModal.css'
+import { useBodyScrollLock } from '../../hooks/useBodyScrollLock'
 
 const ANIM_MS = 220
 
@@ -128,9 +129,9 @@ export default function CurriculumAddModal({
     return () => window.clearTimeout(t)
   }, [])
 
+  useBodyScrollLock()
+
   useEffect(() => {
-    const prev = document.body.style.overflow
-    document.body.style.overflow = 'hidden'
     function onKey(e) {
       if (e.key === 'Escape') {
         e.preventDefault()
@@ -138,10 +139,7 @@ export default function CurriculumAddModal({
       }
     }
     window.addEventListener('keydown', onKey)
-    return () => {
-      document.body.style.overflow = prev
-      window.removeEventListener('keydown', onKey)
-    }
+    return () => window.removeEventListener('keydown', onKey)
   }, [requestClose])
 
   function setField(key, value) {

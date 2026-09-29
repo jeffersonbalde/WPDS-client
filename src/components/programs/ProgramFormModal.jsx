@@ -6,6 +6,7 @@ import { apiErrorMessage } from '../../utils/apiError'
 import { isSameProgramCode, isSameProgramName, normalizeProgramName, programLevel } from '../../utils/program'
 import { wpAlert, wpConfirm, wpConfirmDiscard, wpWithLoading } from '../../utils/wpSwal'
 import '../students/StudentRecordModal.css'
+import { useBodyScrollLock } from '../../hooks/useBodyScrollLock'
 
 const ANIM_MS = 220
 
@@ -185,9 +186,9 @@ export default function ProgramFormModal({ program, onClose, onSaved, onUpdated 
     }
   }, [])
 
+  useBodyScrollLock()
+
   useEffect(() => {
-    const prev = document.body.style.overflow
-    document.body.style.overflow = 'hidden'
     function onKey(e) {
       if (e.key === 'Escape') {
         e.preventDefault()
@@ -195,10 +196,7 @@ export default function ProgramFormModal({ program, onClose, onSaved, onUpdated 
       }
     }
     window.addEventListener('keydown', onKey)
-    return () => {
-      document.body.style.overflow = prev
-      window.removeEventListener('keydown', onKey)
-    }
+    return () => window.removeEventListener('keydown', onKey)
   }, [requestClose])
 
   function setField(key, value) {

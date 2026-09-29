@@ -10,6 +10,7 @@ import { apiErrorMessage } from '../../utils/apiError'
 import '../students/StudentRecordModal.css'
 import '../../pages/StudentsManagePage.css'
 import './StudentListModal.css'
+import { useBodyScrollLock } from '../../hooks/useBodyScrollLock'
 
 const ANIM_MS = 220
 
@@ -63,9 +64,9 @@ export default function GradeSubmissionsListModal({ title, contextLine, basePara
     return () => window.clearTimeout(timer)
   }, [anim, onClose])
 
+  useBodyScrollLock()
+
   useEffect(() => {
-    const prev = document.body.style.overflow
-    document.body.style.overflow = 'hidden'
     function onKey(e) {
       if (e.key === 'Escape') {
         e.preventDefault()
@@ -73,10 +74,7 @@ export default function GradeSubmissionsListModal({ title, contextLine, basePara
       }
     }
     window.addEventListener('keydown', onKey)
-    return () => {
-      document.body.style.overflow = prev
-      window.removeEventListener('keydown', onKey)
-    }
+    return () => window.removeEventListener('keydown', onKey)
   }, [requestClose])
 
   useEffect(() => {

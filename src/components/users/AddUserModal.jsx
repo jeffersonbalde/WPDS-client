@@ -2,10 +2,12 @@ import { useCallback, useEffect, useId, useRef, useState } from 'react'
 import { FiCamera, FiEye, FiEyeOff, FiUser, FiX } from 'react-icons/fi'
 import { toast } from 'react-toastify'
 import api from '../../api/client'
+import PhotoLightbox from '../common/PhotoLightbox'
 import { apiErrorMessage } from '../../utils/apiError'
 import { wpConfirmDiscard } from '../../utils/wpSwal'
 import '../students/StudentRecordModal.css'
 import './AddUserModal.css'
+import { useBodyScrollLock } from '../../hooks/useBodyScrollLock'
 
 const ANIM_MS = 220
 const AVATAR_ACCEPT = 'image/png,image/jpeg,image/webp'
@@ -56,6 +58,7 @@ export default function AddUserModal({ onClose, onSaved }) {
   const [showPassword, setShowPassword] = useState(false)
   const [avatarFile, setAvatarFile] = useState(null)
   const [avatarPreview, setAvatarPreview] = useState(null)
+  const [photoOpen, setPhotoOpen] = useState(false)
   const savedSnap = useRef(snapshot(emptyForm())).current
   const dirty = snapshot(form) !== savedSnap || Boolean(avatarFile)
 
@@ -90,21 +93,19 @@ export default function AddUserModal({ onClose, onSaved }) {
     return () => window.clearTimeout(timer)
   }, [anim, onClose, onSaved])
 
+  useBodyScrollLock()
+
   useEffect(() => {
-    const prev = document.body.style.overflow
-    document.body.style.overflow = 'hidden'
     function onKey(e) {
       if (e.key === 'Escape') {
+        if (photoOpen) return
         e.preventDefault()
         requestClose()
       }
     }
     window.addEventListener('keydown', onKey)
-    return () => {
-      document.body.style.overflow = prev
-      window.removeEventListener('keydown', onKey)
-    }
-  }, [requestClose])
+    return () => window.removeEventListener('keydown', onKey)
+  }, [requestClose, photoOpen])
 
   useEffect(() => {
     return () => {
@@ -239,24 +240,35 @@ export default function AddUserModal({ onClose, onSaved }) {
         <form className="wp-user-modal__form" onSubmit={submit} noValidate>
           <div className="wp-srm__body">
             <div className={`wp-user-modal__avatar-picker${avatarPreview ? ' has-photo' : ''}`}>
-              <label
-                className="wp-user-modal__avatar-preview"
-                htmlFor="add-user-avatar-input"
-                title={avatarFile ? 'Click to change photo' : 'Click to upload photo'}
-              >
-                {avatarPreview ? (
+              {avatarPreview ? (
+                <button
+                  type="button"
+                  className="wp-user-modal__avatar-preview wp-user-modal__avatar-preview--btn"
+                  onClick={() => setPhotoOpen(true)}
+                  title="View photo"
+                  aria-label="View photo"
+                >
                   <img src={avatarPreview} alt="" />
-                ) : (
+                  <span className="wp-user-modal__avatar-overlay wp-user-modal__avatar-overlay--view">
+                    View photo
+                  </span>
+                </button>
+              ) : (
+                <label
+                  className="wp-user-modal__avatar-preview"
+                  htmlFor="add-user-avatar-input"
+                  title="Click to upload photo"
+                >
                   <span className="wp-user-modal__avatar-empty">
                     <FiUser size={42} aria-hidden />
                     <span>No photo</span>
                   </span>
-                )}
-                <span className="wp-user-modal__avatar-overlay">
-                  <FiCamera size={18} aria-hidden />
-                  {avatarFile ? 'Change photo' : 'Upload photo'}
-                </span>
-              </label>
+                  <span className="wp-user-modal__avatar-overlay">
+                    <FiCamera size={18} aria-hidden />
+                    Upload photo
+                  </span>
+                </label>
+              )}
               <input
                 id="add-user-avatar-input"
                 ref={avatarInputRef}
@@ -403,6 +415,12 @@ export default function AddUserModal({ onClose, onSaved }) {
           </footer>
         </form>
       </div>
+
+      <PhotoLightbox
+        src={photoOpen && avatarPreview ? avatarPreview : null}
+        title={form.name.trim() || 'Photo'}
+        onClose={() => setPhotoOpen(false)}
+      />
     </div>
   )
 }

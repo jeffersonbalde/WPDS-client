@@ -9,6 +9,7 @@ import { wpConfirmDiscard } from '../../utils/wpSwal'
 import '../students/StudentRecordModal.css'
 import '../common/FlatSearchSelect.css'
 import './ClassSectionFormModal.css'
+import { useBodyScrollLock } from '../../hooks/useBodyScrollLock'
 
 const ANIM_MS = 220
 
@@ -143,9 +144,9 @@ export default function ClassSectionFormModal({
     return () => window.clearTimeout(timer)
   }, [anim, onClose, onSaved])
 
+  useBodyScrollLock()
+
   useEffect(() => {
-    const prev = document.body.style.overflow
-    document.body.style.overflow = 'hidden'
     function onKey(e) {
       if (e.key === 'Escape') {
         e.preventDefault()
@@ -153,10 +154,7 @@ export default function ClassSectionFormModal({
       }
     }
     window.addEventListener('keydown', onKey)
-    return () => {
-      document.body.style.overflow = prev
-      window.removeEventListener('keydown', onKey)
-    }
+    return () => window.removeEventListener('keydown', onKey)
   }, [requestClose])
 
   function setField(key, value) {

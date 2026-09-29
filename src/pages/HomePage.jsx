@@ -12,6 +12,7 @@ import {
   FiClipboard,
   FiCheckCircle,
   FiUser,
+  FiImage,
 } from 'react-icons/fi'
 import {
   Bar,
@@ -27,6 +28,10 @@ import {
 } from 'recharts'
 import api from '../api/client'
 import { useAuth } from '../context/AuthContext'
+import PeriodDateFilter, {
+  DEFAULT_PERIOD_FILTER,
+  periodFilterParams,
+} from '../components/common/PeriodDateFilter'
 import { ACTIVITY_LOG_NAV_ENABLED } from '../layouts/nav'
 import './HomePage.css'
 
@@ -44,6 +49,8 @@ const STATUS_COLORS = {
   completed: CHART_COLORS.teal,
 }
 
+const ANALYTICS_ROLES = ['registrar', 'admin', 'stakeholder', 'it', 'teacher']
+
 function formatFeedDate(value) {
   if (!value) return ''
   const d = new Date(value)
@@ -56,20 +63,47 @@ export default function HomePage() {
   const [summary, setSummary] = useState(null)
   const [loading, setLoading] = useState(true)
   const [reloadKey, setReloadKey] = useState(0)
+  const [periodFilter, setPeriodFilter] = useState(DEFAULT_PERIOD_FILTER)
 
-  function load() {
+  const showPeriodFilter = ANALYTICS_ROLES.includes(user?.role)
+
+  function load(nextFilter = periodFilter) {
+    if (user?.role === 'student') {
+      setReloadKey((k) => k + 1)
+      setLoading(false)
+      return
+    }
+
+    const customEmpty = nextFilter.period === 'custom'
+      && !nextFilter.date_from
+      && !nextFilter.date_to
+    if (customEmpty) {
+      return
+    }
+
     setLoading(true)
     setReloadKey((k) => k + 1)
     api
-      .get('/dashboard')
+      .get('/dashboard', { params: periodFilterParams(nextFilter) })
       .then((res) => setSummary(res.data))
       .catch(() => setSummary(null))
       .finally(() => setLoading(false))
   }
 
   useEffect(() => {
-    load()
-  }, [])
+    if (user?.role === 'student') {
+      setLoading(false)
+      setSummary(null)
+      setReloadKey((k) => k + 1)
+      return
+    }
+    load(periodFilter)
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- reload when filter or role changes
+  }, [periodFilter.period, periodFilter.date_from, periodFilter.date_to, user?.role])
+
+  function onPeriodChange(next) {
+    setPeriodFilter(next)
+  }
 
   return (
     <div className="wp-home">
@@ -80,11 +114,20 @@ export default function HomePage() {
             Welcome, {user?.name || 'User'}.
           </p>
         </div>
-        <button type="button" className="wp-home__refresh" onClick={load} disabled={loading}>
+        <button type="button" className="wp-home__refresh" onClick={() => load()} disabled={loading}>
           <FiRefreshCw className={loading ? 'is-spin' : ''} />
           Refresh
         </button>
       </div>
+
+      {showPeriodFilter ? (
+        <PeriodDateFilter
+          value={periodFilter}
+          onChange={onPeriodChange}
+          disabled={loading}
+          serverFilter={summary?.filter || null}
+        />
+      ) : null}
 
       {user?.role === 'student' && (
         <StudentPortalHome reloadKey={reloadKey} />
@@ -748,6 +791,11 @@ function AdminDashboard({ summary, loading, role }) {
             <Link to="/system" className="wp-regdash__link">
               <FiBriefcase />
               Backup & Security
+              <FiArrowRight />
+            </Link>
+            <Link to="/branding" className="wp-regdash__link">
+              <FiImage />
+              School Info
               <FiArrowRight />
             </Link>
             {ACTIVITY_LOG_NAV_ENABLED ? (

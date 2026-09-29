@@ -6,6 +6,7 @@ import { apiErrorMessage } from '../../utils/apiError'
 import { wpConfirm } from '../../utils/wpSwal'
 import '../students/StudentRecordModal.css'
 import './SubmissionReviewModal.css'
+import { useBodyScrollLock } from '../../hooks/useBodyScrollLock'
 
 const ANIM_MS = 220
 
@@ -62,9 +63,9 @@ export default function GradeChangeReviewModal({ request, onClose, onReviewed, r
     return () => window.clearTimeout(timer)
   }, [anim, onClose, onReviewed])
 
+  useBodyScrollLock()
+
   useEffect(() => {
-    const prev = document.body.style.overflow
-    document.body.style.overflow = 'hidden'
     function onKey(e) {
       if (e.key === 'Escape') {
         e.preventDefault()
@@ -72,10 +73,7 @@ export default function GradeChangeReviewModal({ request, onClose, onReviewed, r
       }
     }
     window.addEventListener('keydown', onKey)
-    return () => {
-      document.body.style.overflow = prev
-      window.removeEventListener('keydown', onKey)
-    }
+    return () => window.removeEventListener('keydown', onKey)
   }, [requestClose])
 
   const sp = request?.grade?.enrollment_subject?.admission?.student_profile

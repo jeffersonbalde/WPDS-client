@@ -6,6 +6,7 @@ import { apiErrorMessage } from '../../utils/apiError'
 import { wpConfirm, wpConfirmDiscard } from '../../utils/wpSwal'
 import '../students/StudentRecordModal.css'
 import './SubjectFormModal.css'
+import { useBodyScrollLock } from '../../hooks/useBodyScrollLock'
 
 const ANIM_MS = 220
 
@@ -91,9 +92,9 @@ export default function SubjectFormModal({ subject, onClose, onSaved }) {
     return () => window.clearTimeout(t)
   }, [])
 
+  useBodyScrollLock()
+
   useEffect(() => {
-    const prev = document.body.style.overflow
-    document.body.style.overflow = 'hidden'
     function onKey(e) {
       if (e.key === 'Escape') {
         e.preventDefault()
@@ -101,10 +102,7 @@ export default function SubjectFormModal({ subject, onClose, onSaved }) {
       }
     }
     window.addEventListener('keydown', onKey)
-    return () => {
-      document.body.style.overflow = prev
-      window.removeEventListener('keydown', onKey)
-    }
+    return () => window.removeEventListener('keydown', onKey)
   }, [requestClose])
 
   function setField(key, value) {

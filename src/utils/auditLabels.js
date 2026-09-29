@@ -1,0 +1,43 @@
+const ACTION_LABELS = {
+  'auth.login': 'Logged in',
+  'auth.logout': 'Logged out',
+  'auth.login_failed': 'Failed login',
+  'auth.login_blocked': 'Blocked login (deactivated)',
+  'student.created': 'Created student',
+  'student.deleted': 'Deleted student',
+  'admission.created': 'Created admission',
+  'admission.status_updated': 'Updated admission status',
+  'admission.subjects_enrolled': 'Enrolled subjects',
+  'admission.deleted': 'Deleted admission',
+  'grade.updated': 'Updated grade',
+  'grade_submission.submitted': 'Submitted grades',
+  'grade_submission.released': 'Released grades',
+  'grade_submission.returned': 'Returned grades',
+  'grade_change.approved': 'Approved grade change',
+  'grade_change.rejected': 'Rejected grade change',
+  'user.created': 'Created user',
+  'user.updated': 'Updated user',
+  'user.password_reset': 'Reset user password',
+  'user.password_changed': 'Changed password',
+  'user.avatar_updated': 'Updated photo',
+  'user.avatar_removed': 'Removed photo',
+  'system.branding_updated': 'Updated school info texts',
+  'system.branding_logo_updated': 'Updated logo',
+  'system.branding_favicon_updated': 'Updated favicon',
+  'system.branding_login_bg_updated': 'Updated login background',
+  'system.branding_logo_cleared': 'Restored default logo',
+  'system.branding_favicon_cleared': 'Restored default favicon',
+  'system.branding_login_bg_cleared': 'Restored default login background',
+  'system.branding_reset': 'Reset school info',
+  'system.backup_created': 'Created backup',
+  'system.backup_deleted': 'Deleted backup',
+  'system.backup_schedule_updated': 'Updated backup schedule',
+  'system.backup_scheduled': 'Scheduled backup ran',
+  'system.audit_logs_pruned': 'Cleaned old activity logs',
+  'system.audit_retention_updated': 'Updated auto-delete schedule',
+}
+
+export function actionLabel(action) {
+  if (!action) return '—'
+  return ACTION_LABELS[action] || String(action).replace(/[._]/g, ' ')
+}

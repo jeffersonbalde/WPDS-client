@@ -1,70 +1,305 @@
-.wp-audit-detail__context {
-  margin: 0.3rem 0 0;
-  font-size: 0.85rem;
+.wp-audit-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 1080;
+  display: grid;
+  place-items: center;
+  padding: 1rem;
+  padding: max(1rem, env(safe-area-inset-top, 0px))
+    max(1rem, env(safe-area-inset-right, 0px))
+    max(1rem, env(safe-area-inset-bottom, 0px))
+    max(1rem, env(safe-area-inset-left, 0px));
+  background: rgba(15, 23, 42, 0.42);
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  box-sizing: border-box;
+}
+
+.wp-audit-modal.is-open {
+  opacity: 1;
+}
+
+.wp-audit-modal.is-leave {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.wp-audit-modal__dialog {
+  display: flex;
+  flex-direction: column;
+  width: min(420px, 100%);
+  max-height: min(92vh, 34rem);
+  margin: 0;
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.55rem;
+  box-shadow: 0 16px 40px rgba(15, 23, 42, 0.18);
+  overflow: hidden;
+  opacity: 0;
+  transform: translateY(12px) scale(0.98);
+  transition:
+    opacity 0.2s ease,
+    transform 0.22s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.wp-audit-modal.is-open .wp-audit-modal__dialog {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+.wp-audit-modal.is-leave .wp-audit-modal__dialog {
+  opacity: 0;
+  transform: translateY(8px) scale(0.98);
+}
+
+.wp-audit-modal__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 1rem 1rem 0.85rem;
+  background:
+    linear-gradient(180deg, #f8fafc 0%, #fff 100%);
+  border-bottom: 1px solid #eef2f7;
+}
+
+.wp-audit-modal__hero {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.7rem;
+  min-width: 0;
+}
+
+.wp-audit-modal__icon {
+  flex-shrink: 0;
+  display: inline-grid;
+  place-items: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 0.45rem;
+  color: #1036c9;
+  background: #eef2ff;
+  border: 1px solid #dbe4ff;
+}
+
+.wp-audit-modal__eyebrow {
+  margin: 0;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
   color: #64748b;
 }
 
-.wp-audit-detail__meta {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 0.75rem 1rem;
-  margin-bottom: 1.1rem;
-}
-
-@media (max-width: 575.98px) {
-  .wp-audit-detail__meta {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-}
-
-.wp-audit-detail__meta > div {
-  display: flex;
-  flex-direction: column;
-  gap: 0.15rem;
-  font-size: 0.875rem;
-  color: #1e293b;
+.wp-audit-modal__title {
+  margin: 0.15rem 0 0;
+  font-size: 1.05rem;
+  font-weight: 700;
+  line-height: 1.3;
+  color: #0f172a;
   word-break: break-word;
 }
 
-.wp-audit-detail__meta > div span {
-  font-size: 0.72rem;
+.wp-audit-modal__close {
+  flex-shrink: 0;
+  display: inline-grid;
+  place-items: center;
+  width: 2rem;
+  height: 2rem;
+  margin: 0;
+  padding: 0;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.35rem;
+  background: #fff;
+  color: #64748b;
+  cursor: pointer;
+}
+
+.wp-audit-modal__close:hover {
+  color: #0f172a;
+  border-color: #cbd5e1;
+  background: #f8fafc;
+}
+
+.wp-audit-modal__body {
+  padding: 0.95rem 1rem 0.35rem;
+  overflow: auto;
+  min-height: 0;
+}
+
+.wp-audit-modal__summary {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.65rem;
+}
+
+.wp-audit-modal__item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.55rem;
+  padding: 0.7rem 0.75rem;
+  border: 1px solid #e8eef5;
+  border-radius: 0.45rem;
+  background: #fbfcfe;
+  min-width: 0;
+}
+
+.wp-audit-modal__item--wide {
+  grid-column: 1 / -1;
+}
+
+.wp-audit-modal__item-icon {
+  flex-shrink: 0;
+  display: inline-grid;
+  place-items: center;
+  width: 1.7rem;
+  height: 1.7rem;
+  margin-top: 0.05rem;
+  border-radius: 999px;
+  color: #1036c9;
+  background: #eef2ff;
+}
+
+.wp-audit-modal__item > div {
+  display: flex;
+  flex-direction: column;
+  gap: 0.12rem;
+  min-width: 0;
+}
+
+.wp-audit-modal__label {
+  font-size: 0.68rem;
   font-weight: 700;
-  text-transform: uppercase;
   letter-spacing: 0.03em;
+  text-transform: uppercase;
   color: #94a3b8;
 }
 
-.wp-audit-detail__values {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 0.85rem;
+.wp-audit-modal__item strong {
+  font-size: 0.9rem;
+  font-weight: 650;
+  color: #0f172a;
+  line-height: 1.35;
+  word-break: break-word;
 }
 
-@media (max-width: 575.98px) {
-  .wp-audit-detail__values {
-    grid-template-columns: 1fr;
-  }
-}
-
-.wp-audit-detail__values h3 {
-  margin: 0 0 0.35rem;
-  font-size: 0.72rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.03em;
+.wp-audit-modal__item em {
+  font-style: normal;
+  font-size: 0.78rem;
   color: #64748b;
 }
 
-.wp-audit-detail__values pre {
+.wp-audit-modal__facts {
+  margin-top: 0.85rem;
+  border: 1px solid #e8eef5;
+  border-radius: 0.45rem;
+  overflow: hidden;
+  background: #fff;
+}
+
+.wp-audit-modal__facts-head {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.55rem 0.8rem;
+  background: #f8fafc;
+  border-bottom: 1px solid #eef2f7;
+  color: #475569;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+.wp-audit-modal__facts-list {
+  list-style: none;
   margin: 0;
-  padding: 0.65rem 0.75rem;
-  background: #f8f9fa;
-  border: 1px solid #dee2e6;
-  border-radius: 0.25rem;
-  font-size: 0.78rem;
-  line-height: 1.4;
-  max-height: 16rem;
-  overflow: auto;
-  white-space: pre-wrap;
+  padding: 0.15rem 0;
+}
+
+.wp-audit-modal__facts-list li {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.85rem;
+  padding: 0.55rem 0.8rem;
+  border-top: 1px solid #f1f5f9;
+}
+
+.wp-audit-modal__facts-list li:first-child {
+  border-top: 0;
+}
+
+.wp-audit-modal__facts-list span {
+  flex-shrink: 0;
+  font-size: 0.8rem;
+  color: #64748b;
+}
+
+.wp-audit-modal__facts-list strong {
+  text-align: right;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #0f172a;
   word-break: break-word;
+}
+
+.wp-audit-modal__footer {
+  display: flex;
+  justify-content: flex-end;
+  padding: 0.75rem 1rem 1rem;
+  border-top: 1px solid #eef2f7;
+  background: #fff;
+}
+
+.wp-audit-modal__btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 2.15rem;
+  padding: 0.4rem 1rem;
+  border: 1px solid #cbd5e1;
+  border-radius: 0.35rem;
+  background: #fff;
+  color: #334155;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.wp-audit-modal__btn:hover {
+  background: #f8fafc;
+  border-color: #94a3b8;
+  color: #0f172a;
+}
+
+@media (max-width: 419.98px) {
+  .wp-audit-modal__summary {
+    grid-template-columns: 1fr;
+  }
+
+  .wp-audit-modal__item--wide {
+    grid-column: auto;
+  }
+
+  .wp-audit-modal__facts-list li {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.15rem;
+  }
+
+  .wp-audit-modal__facts-list strong {
+    text-align: left;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wp-audit-modal,
+  .wp-audit-modal__dialog {
+    transition: none;
+  }
+
+  .wp-audit-modal__dialog {
+    transform: none;
+  }
 }

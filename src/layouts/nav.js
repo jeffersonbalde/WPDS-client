@@ -20,13 +20,13 @@ import {
   FiPieChart,
   FiActivity,
   FiBell,
+  FiImage,
 } from 'react-icons/fi'
 
 /**
- * Temporary: hide Activity Log from IT / admin / stakeholder nav + quick access.
- * Keep the page + route + API — flip to true when the client wants this feature.
+ * Show Activity Log in IT / admin / stakeholder nav + quick access.
  */
-export const ACTIVITY_LOG_NAV_ENABLED = false
+export const ACTIVITY_LOG_NAV_ENABLED = true
 
 /**
  * @typedef {{ to: string, label: string, end?: boolean, icon: import('react').ComponentType }} NavLinkItem
@@ -140,6 +140,7 @@ const byRole = {
         ...(ACTIVITY_LOG_NAV_ENABLED
           ? [{ to: '/activity-log', label: 'Activity Log', icon: FiActivity }]
           : []),
+        { to: '/branding', label: 'School Info', icon: FiImage },
       ],
     },
   ],

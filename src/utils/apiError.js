@@ -27,7 +27,7 @@ export function apiErrorMessage(err, fallback = 'Something went wrong. Please tr
   if (status === 403) return 'You do not have permission to perform this action.'
   if (status === 404) return 'The requested record was not found.'
   if (status === 422) return 'Please check the highlighted fields and try again.'
-  if (status === 429) return 'Too many requests. Please wait a moment and try again.'
+  if (status === 429) return 'Too many tries. Please wait 1 minute, then try again.'
   if (status >= 500) return 'A server error occurred. Please try again later.'
   if (!err?.response) return 'Unable to connect to the server. Check your connection and try again.'
 

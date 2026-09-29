@@ -40,11 +40,23 @@
   background: #f8f9fa;
 }
 
-.wp-user-modal__form {
+.wp-user-modal__loading {
   display: flex;
-  flex-direction: column;
-  flex: 1 1 auto;
-  min-height: 0;
+  align-items: center;
+  justify-content: center;
+  min-height: 12rem;
+}
+
+.wp-user-modal__note {
+  margin: 0 0 1rem;
+  padding: 0.7rem 0.85rem;
+  border: 1px solid #dee2e6;
+  border-left: 3px solid #1036c9;
+  border-radius: 0.25rem;
+  background: #fff;
+  color: #495057;
+  font-size: 0.84rem;
+  line-height: 1.45;
 }
 
 /* —— avatar picker (ID-photo panel) —— */
@@ -72,13 +84,22 @@
   overflow: hidden;
   border: 1px solid #ced4da;
   cursor: pointer;
-  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.wp-user-modal__avatar-preview--btn {
+  padding: 0;
+  font: inherit;
+  color: inherit;
+  cursor: zoom-in;
 }
 
 .wp-user-modal__avatar-preview:hover,
-.wp-user-modal__avatar-preview:focus-within {
+.wp-user-modal__avatar-preview:focus-within,
+.wp-user-modal__avatar-preview--btn:focus-visible {
   border-color: #1036c9;
   box-shadow: 0 0 0 2px rgba(16, 54, 201, 0.15);
+  outline: none;
 }
 
 .wp-user-modal__avatar-preview img {
@@ -87,6 +108,12 @@
   object-fit: cover;
   object-position: center top;
   display: block;
+  transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.wp-user-modal__avatar-preview--btn:hover img,
+.wp-user-modal__avatar-preview--btn:focus-visible img {
+  transform: scale(1.05);
 }
 
 .wp-user-modal__avatar-empty {
@@ -127,12 +154,14 @@
   letter-spacing: 0.02em;
   opacity: 0;
   transform: translateY(4px);
-  transition: opacity 0.15s ease, transform 0.15s ease;
+  transition: opacity 0.25s ease, transform 0.25s ease;
   pointer-events: none;
 }
 
 .wp-user-modal__avatar-preview:hover .wp-user-modal__avatar-overlay,
 .wp-user-modal__avatar-preview:focus-within .wp-user-modal__avatar-overlay,
+.wp-user-modal__avatar-preview--btn:hover .wp-user-modal__avatar-overlay,
+.wp-user-modal__avatar-preview--btn:focus-visible .wp-user-modal__avatar-overlay,
 .wp-user-modal__avatar-picker:not(.has-photo) .wp-user-modal__avatar-overlay {
   opacity: 1;
   transform: translateY(0);

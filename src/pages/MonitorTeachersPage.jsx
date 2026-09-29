@@ -4,6 +4,7 @@ import { toast } from 'react-toastify'
 import api from '../api/client'
 import FlatPager from '../components/common/FlatPager'
 import Avatar from '../components/common/Avatar'
+import PhotoLightbox from '../components/common/PhotoLightbox'
 import StaffUserViewModal from '../components/users/StaffUserViewModal'
 import { apiErrorMessage } from '../utils/apiError'
 import { downloadExcelExport, excelExportError } from '../utils/excelExport'
@@ -23,6 +24,7 @@ export default function MonitorTeachersPage() {
   const [summaryReady, setSummaryReady] = useState(false)
   const [exporting, setExporting] = useState(false)
   const [viewTeacherId, setViewTeacherId] = useState(null)
+  const [photoView, setPhotoView] = useState(null)
 
   useEffect(() => {
     const t = setTimeout(() => {
@@ -211,14 +213,28 @@ export default function MonitorTeachersPage() {
             {rows.map((t) => {
               const subId = t.staff_profile?.employee_no ? `Emp: ${t.staff_profile.employee_no}` : null
               const sections = t.class_sections_count ?? 0
+              const hasPhoto = Boolean(t.avatar_url)
 
               return (
                 <article key={t.id} className="wp-users__card wp-users__card--teacher">
-                  <div className="wp-users__card-avatar-wrap">
+                  <button
+                    type="button"
+                    className={`wp-users__card-avatar-wrap${hasPhoto ? ' has-photo' : ''}`}
+                    onClick={() => {
+                      if (!hasPhoto) return
+                      setPhotoView({ src: t.avatar_url, title: t.name || 'Photo' })
+                    }}
+                    disabled={!hasPhoto}
+                    title={hasPhoto ? 'View photo' : 'No photo'}
+                    aria-label={hasPhoto ? `View photo of ${t.name}` : `${t.name} has no photo`}
+                  >
                     <div className="wp-users__card-avatar">
                       <Avatar src={t.avatar_url} name={t.name} />
+                      {hasPhoto ? (
+                        <span className="wp-users__card-avatar-hint" aria-hidden>View photo</span>
+                      ) : null}
                     </div>
-                  </div>
+                  </button>
 
                   <div className="wp-users__card-body">
                     <h3 className="wp-users__card-name" title={t.name}>{t.name}</h3>
@@ -265,6 +281,12 @@ export default function MonitorTeachersPage() {
           onClose={() => setViewTeacherId(null)}
         />
       ) : null}
+
+      <PhotoLightbox
+        src={photoView?.src || null}
+        title={photoView?.title}
+        onClose={() => setPhotoView(null)}
+      />
     </div>
   )
 }

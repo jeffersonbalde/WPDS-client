@@ -5,12 +5,14 @@ import { toast } from 'react-toastify'
 import api from '../../api/client'
 import WestPrimeLoader from '../common/WestPrimeLoader'
 import Avatar from '../common/Avatar'
+import PhotoLightbox from '../common/PhotoLightbox'
 import ClassSectionStudentsModal from '../class-sections/ClassSectionStudentsModal'
 import { apiErrorMessage } from '../../utils/apiError'
 import '../students/StudentRecordModal.css'
 import '../../pages/StudentsManagePage.css'
 import '../admissions/AdmissionViewModal.css'
 import './StaffUserViewModal.css'
+import { useBodyScrollLock } from '../../hooks/useBodyScrollLock'
 
 const ANIM_MS = 220
 
@@ -48,6 +50,7 @@ export default function StaffUserViewModal({ userId, onClose, baseUrl = '/users'
   const [loading, setLoading] = useState(true)
   const [user, setUser] = useState(null)
   const [viewSectionRow, setViewSectionRow] = useState(null)
+  const [photoOpen, setPhotoOpen] = useState(false)
 
   const beginLeave = useCallback(() => {
     if (closingRef.current) return
@@ -73,21 +76,19 @@ export default function StaffUserViewModal({ userId, onClose, baseUrl = '/users'
     return () => window.clearTimeout(timer)
   }, [anim, onClose])
 
+  useBodyScrollLock()
+
   useEffect(() => {
-    const prev = document.body.style.overflow
-    document.body.style.overflow = 'hidden'
     function onKey(e) {
       if (e.key === 'Escape') {
+        if (photoOpen) return
         e.preventDefault()
         requestClose()
       }
     }
     window.addEventListener('keydown', onKey)
-    return () => {
-      document.body.style.overflow = prev
-      window.removeEventListener('keydown', onKey)
-    }
-  }, [requestClose])
+    return () => window.removeEventListener('keydown', onKey)
+  }, [requestClose, photoOpen])
 
   useEffect(() => {
     if (!userId) return undefined
@@ -155,9 +156,22 @@ export default function StaffUserViewModal({ userId, onClose, baseUrl = '/users'
       <div className="wp-srm__dialog" role="dialog" aria-modal="true" aria-labelledby={titleId}>
         <header className="wp-srm__header wp-svm__header">
           <div className="wp-svm__identity">
-            <div className="wp-svm__avatar" aria-hidden={!user}>
-              <Avatar src={user?.avatar_url} name={user?.name} />
-            </div>
+            {user?.avatar_url ? (
+              <button
+                type="button"
+                className="wp-svm__avatar wp-svm__avatar--btn has-photo"
+                onClick={() => setPhotoOpen(true)}
+                title="View photo"
+                aria-label={`View photo of ${user.name}`}
+              >
+                <Avatar src={user.avatar_url} name={user.name} />
+                <span className="wp-svm__avatar-hint" aria-hidden>View</span>
+              </button>
+            ) : (
+              <div className="wp-svm__avatar" aria-hidden={!user}>
+                <Avatar src={user?.avatar_url} name={user?.name} />
+              </div>
+            )}
             <div className="wp-svm__identity-text">
               <p className="wp-svm__eyebrow">User record</p>
               <h2 id={titleId} className="wp-srm__title wp-svm__title">
@@ -297,6 +311,12 @@ export default function StaffUserViewModal({ userId, onClose, baseUrl = '/users'
         <ClassSectionStudentsModal sectionRow={viewSectionRow} onClose={() => setViewSectionRow(null)} />,
         document.body
       ) : null}
+
+      <PhotoLightbox
+        src={photoOpen && user?.avatar_url ? user.avatar_url : null}
+        title={user?.name}
+        onClose={() => setPhotoOpen(false)}
+      />
     </div>
   )
 }

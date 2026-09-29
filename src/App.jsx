@@ -2,6 +2,7 @@ import { lazy, Suspense } from 'react'
 import { createBrowserRouter, Navigate, RouterProvider } from 'react-router-dom'
 import { ToastContainer } from 'react-toastify'
 import { AuthProvider, useAuth } from './context/AuthContext'
+import { BrandingProvider } from './context/BrandingContext'
 import DashboardLayout from './layouts/DashboardLayout'
 import WestPrimeLoader from './components/common/WestPrimeLoader'
 import 'react-toastify/dist/ReactToastify.css'
@@ -35,6 +36,7 @@ const TermsPage = lazy(() => import('./pages/TermsPage'))
 const AnnouncementsPage = lazy(() => import('./pages/AnnouncementsPage'))
 const UsersPage = lazy(() => import('./pages/UsersPage'))
 const SystemPage = lazy(() => import('./pages/SystemPage'))
+const BrandingPage = lazy(() => import('./pages/BrandingPage'))
 const MonitorPage = lazy(() => import('./pages/MonitorPage'))
 const ReportsPopulationPage = lazy(() => import('./pages/ReportsPopulationPage'))
 const ReportsPerformancePage = lazy(() => import('./pages/ReportsPerformancePage'))
@@ -109,8 +111,8 @@ const router = createBrowserRouter([
 
       { path: 'students', element: <Protected roles={['registrar']}><LazyRoute><StudentsManagePage /></LazyRoute></Protected> },
       { path: 'students/new', element: <Protected roles={['registrar']}><LazyRoute><StudentCreatePage /></LazyRoute></Protected> },
-      { path: 'students/:id/edit', element: <Protected roles={['registrar']}><LazyRoute><StudentEditPage /></LazyRoute></Protected> },
-      { path: 'students/:id', element: <Protected roles={['registrar']}><LazyRoute><StudentRecordPage /></LazyRoute></Protected> },
+      { path: 'students/:id/edit', element: <Protected roles={['registrar', 'it']}><LazyRoute><StudentEditPage /></LazyRoute></Protected> },
+      { path: 'students/:id', element: <Protected roles={['registrar', 'it']}><LazyRoute><StudentRecordPage /></LazyRoute></Protected> },
       { path: 'admissions-manage', element: <Protected roles={['registrar']}><LazyRoute><AdmissionsManagePage /></LazyRoute></Protected> },
       { path: 'admissions-manage/new', element: <Protected roles={['registrar']}><LazyRoute><AdmissionCreatePage /></LazyRoute></Protected> },
       { path: 'class-sections', element: <Protected roles={['registrar']}><LazyRoute><ClassSectionsManagePage /></LazyRoute></Protected> },
@@ -123,6 +125,7 @@ const router = createBrowserRouter([
       { path: 'announcements', element: <Protected roles={['registrar']}><LazyRoute><AnnouncementsPage /></LazyRoute></Protected> },
 
       { path: 'users', element: <Protected roles={['it']}><LazyRoute><UsersPage /></LazyRoute></Protected> },
+      { path: 'branding', element: <Protected roles={['it']}><LazyRoute><BrandingPage /></LazyRoute></Protected> },
       { path: 'system', element: <Protected roles={['it']}><LazyRoute><SystemPage /></LazyRoute></Protected> },
       { path: 'activity-log', element: <Protected roles={['it', 'admin', 'stakeholder']}><LazyRoute><ActivityLogPage /></LazyRoute></Protected> },
 
@@ -138,20 +141,22 @@ const router = createBrowserRouter([
 export default function App() {
   return (
     <AuthProvider>
-      <ToastContainer
-        theme="light"
-        newestOnTop
-        closeOnClick
-        pauseOnHover
-        autoClose={4500}
-        limit={3}
-        hideProgressBar={false}
-        toastClassName="wp-toast"
-        bodyClassName="wp-toast__body"
-        progressClassName="wp-toast__progress"
-        style={{ fontSize: '0.875rem' }}
-      />
-      <RouterProvider router={router} />
+      <BrandingProvider>
+        <ToastContainer
+          theme="light"
+          newestOnTop
+          closeOnClick
+          pauseOnHover
+          autoClose={4500}
+          limit={3}
+          hideProgressBar={false}
+          toastClassName="wp-toast"
+          bodyClassName="wp-toast__body"
+          progressClassName="wp-toast__progress"
+          style={{ fontSize: '0.875rem' }}
+        />
+        <RouterProvider router={router} />
+      </BrandingProvider>
     </AuthProvider>
   )
 }

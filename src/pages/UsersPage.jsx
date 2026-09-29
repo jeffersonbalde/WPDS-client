@@ -1,10 +1,13 @@
 import { useCallback, useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { FiPlus, FiRefreshCw } from 'react-icons/fi'
 import { toast } from 'react-toastify'
 import Swal from 'sweetalert2'
 import FlatPager from '../components/common/FlatPager'
 import Avatar from '../components/common/Avatar'
+import PhotoLightbox from '../components/common/PhotoLightbox'
 import AddUserModal from '../components/users/AddUserModal'
+import EditUserModal from '../components/users/EditUserModal'
 import StudentRecordModal from '../components/students/StudentRecordModal'
 import StaffUserViewModal from '../components/users/StaffUserViewModal'
 import { useAuth } from '../context/AuthContext'
@@ -23,10 +26,6 @@ const ALL_ROLES = [
   { value: 'stakeholder', label: 'Stakeholder' },
 ]
 
-const AVATAR_ACCEPT = 'image/png,image/jpeg,image/webp'
-const AVATAR_MAX_BYTES = 20 * 1024 * 1024
-const AVATAR_MAX_LABEL = '20 MB'
-
 const emptyMeta = { current_page: 1, last_page: 1, total: 0, from: 0, to: 0 }
 const emptySummary = { total: 0, active: 0, inactive: 0, students: 0 }
 
@@ -36,12 +35,13 @@ function roleLabel(role) {
 
 export default function UsersPage() {
   const { user: currentUser } = useAuth()
+  const navigate = useNavigate()
   const [rows, setRows] = useState([])
   const [meta, setMeta] = useState(emptyMeta)
   const [summary, setSummary] = useState(emptySummary)
   const [loading, setLoading] = useState(true)
   const [modalOpen, setModalOpen] = useState(false)
-  const [cardAvatarBusyId, setCardAvatarBusyId] = useState(null)
+  const [photoView, setPhotoView] = useState(null)
 
   const [search, setSearch] = useState('')
   const [debouncedSearch, setDebouncedSearch] = useState('')
@@ -51,6 +51,7 @@ export default function UsersPage() {
   const [perPage, setPerPage] = useState(10)
   const [viewStudentId, setViewStudentId] = useState(null)
   const [viewUserId, setViewUserId] = useState(null)
+  const [editUserId, setEditUserId] = useState(null)
 
   useEffect(() => {
     const t = setTimeout(() => {
@@ -112,32 +113,9 @@ export default function UsersPage() {
     }
   }
 
-  async function onCardAvatarChange(user, e) {
-    const file = e.target.files?.[0]
-    e.target.value = ''
-    if (!file) return
-
-    if (!['image/png', 'image/jpeg', 'image/webp'].includes(file.type)) {
-      toast.error('Photo must be a JPG, PNG, or WEBP image.')
-      return
-    }
-    if (file.size > AVATAR_MAX_BYTES) {
-      toast.error(`Photo must be ${AVATAR_MAX_LABEL} or smaller.`)
-      return
-    }
-
-    setCardAvatarBusyId(user.id)
-    try {
-      const fd = new FormData()
-      fd.append('avatar', file)
-      const { data } = await api.post(`/users/${user.id}/avatar`, fd)
-      setRows((prev) => prev.map((r) => (r.id === user.id ? { ...r, avatar_url: data.avatar_url } : r)))
-      toast.success('Profile photo updated.')
-    } catch (err) {
-      toast.error(apiErrorMessage(err, 'Failed to update profile photo.'))
-    } finally {
-      setCardAvatarBusyId(null)
-    }
+  function openPhoto(user) {
+    if (!user?.avatar_url) return
+    setPhotoView({ src: user.avatar_url, title: user.name || 'Photo' })
   }
 
   async function toggleActive(user) {
@@ -179,6 +157,24 @@ export default function UsersPage() {
       return
     }
     setViewUserId(user.id)
+  }
+
+  function editUser(user) {
+    if (user.role === 'student') {
+      const studentId = user.student_profile?.id
+      if (!studentId) {
+        toast.error('This student has no profile record yet.')
+        return
+      }
+      navigate(`/students/${studentId}/edit`)
+      return
+    }
+    setEditUserId(user.id)
+  }
+
+  async function onUserUpdated() {
+    setEditUserId(null)
+    await load()
   }
 
   async function resetPassword(user) {
@@ -332,32 +328,30 @@ export default function UsersPage() {
         ) : (
           <div className="wp-users__grid">
             {rows.map((u) => {
-              const busy = cardAvatarBusyId === u.id
               const subId = u.staff_profile?.employee_no
                 ? `Emp: ${u.staff_profile.employee_no}`
                 : u.student_profile?.student_no
                   ? `Student: ${u.student_profile.student_no}`
                   : null
+              const hasPhoto = Boolean(u.avatar_url)
 
               return (
                 <article key={u.id} className={`wp-users__card wp-users__card--${u.role}`}>
-                  <label
-                    className="wp-users__card-avatar-wrap"
-                    title="Click to change photo"
-                    aria-label={`Change photo for ${u.name}`}
+                  <button
+                    type="button"
+                    className={`wp-users__card-avatar-wrap${hasPhoto ? ' has-photo' : ''}`}
+                    onClick={() => openPhoto(u)}
+                    disabled={!hasPhoto}
+                    title={hasPhoto ? 'View photo' : 'No photo'}
+                    aria-label={hasPhoto ? `View photo of ${u.name}` : `${u.name} has no photo`}
                   >
                     <div className="wp-users__card-avatar">
                       <Avatar src={u.avatar_url} name={u.name} />
-                      {busy ? <span className="wp-users__card-avatar-busy" aria-hidden /> : null}
+                      {hasPhoto ? (
+                        <span className="wp-users__card-avatar-hint" aria-hidden>View photo</span>
+                      ) : null}
                     </div>
-                    <input
-                      type="file"
-                      accept={AVATAR_ACCEPT}
-                      hidden
-                      disabled={busy}
-                      onChange={(e) => onCardAvatarChange(u, e)}
-                    />
-                  </label>
+                  </button>
 
                   <div className="wp-users__card-body">
                     <h3 className="wp-users__card-name" title={u.name}>{u.name}</h3>
@@ -377,6 +371,13 @@ export default function UsersPage() {
                       onClick={() => viewUser(u)}
                     >
                       View
+                    </button>
+                    <button
+                      type="button"
+                      className="wp-flat__btn wp-flat__btn--edit wp-flat__btn--sm"
+                      onClick={() => editUser(u)}
+                    >
+                      Edit
                     </button>
                     <button
                       type="button"
@@ -429,6 +430,20 @@ export default function UsersPage() {
           onClose={() => setViewUserId(null)}
         />
       ) : null}
+
+      {editUserId ? (
+        <EditUserModal
+          userId={editUserId}
+          onClose={() => setEditUserId(null)}
+          onSaved={onUserUpdated}
+        />
+      ) : null}
+
+      <PhotoLightbox
+        src={photoView?.src || null}
+        title={photoView?.title}
+        onClose={() => setPhotoView(null)}
+      />
     </div>
   )
 }

@@ -1,4 +1,4 @@
-/* View User — larger government-portal style modal */
+/* View User — same normal modal size as Edit / Add */
 
 .wp-srm.wp-svm {
   place-items: center;
@@ -11,9 +11,12 @@
 }
 
 .wp-srm.wp-svm .wp-srm__dialog {
-  width: min(72rem, 100%);
-  height: min(52rem, calc(100dvh - 2.5rem));
-  max-height: min(calc(100dvh - 2.5rem), 94vh);
+  display: flex;
+  flex-direction: column;
+  width: min(46rem, calc(100vw - 2.5rem));
+  height: auto;
+  max-height: min(calc(100dvh - 2.5rem), 92vh);
+  overflow: hidden;
   border-radius: 0.25rem;
   border: 1px solid #ced4da;
   box-shadow: 0 16px 48px rgba(15, 23, 42, 0.18);
@@ -21,8 +24,9 @@
 
 .wp-srm.wp-svm .wp-svm__header {
   align-items: flex-start;
-  gap: 1rem;
-  padding: 1.1rem 1.25rem;
+  flex-shrink: 0;
+  gap: 0.85rem;
+  padding: 0.85rem 1.15rem;
   background: linear-gradient(180deg, #ffffff 0%, #f8f9fa 100%);
   border-bottom: 1px solid #dee2e6;
 }
@@ -30,27 +34,44 @@
 .wp-svm__identity {
   display: flex;
   align-items: flex-start;
-  gap: 1.1rem;
+  gap: 0.9rem;
   min-width: 0;
   flex: 1;
 }
 
 .wp-svm__avatar {
+  position: relative;
   flex-shrink: 0;
-  width: 7.5rem;
-  height: 7.5rem;
+  width: 5.5rem;
+  height: 5.5rem;
   border-radius: 0.25rem;
   background: #e9ecef;
   color: #495057;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 2rem;
+  font-size: 1.55rem;
   font-weight: 700;
   letter-spacing: 0.02em;
   overflow: hidden;
   border: 1px solid #ced4da;
   box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.6);
+}
+
+.wp-svm__avatar--btn {
+  padding: 0;
+  margin: 0;
+  cursor: zoom-in;
+  font: inherit;
+  color: inherit;
+  transition: box-shadow 0.25s ease, border-color 0.25s ease;
+}
+
+.wp-svm__avatar--btn:hover,
+.wp-svm__avatar--btn:focus-visible {
+  border-color: #1036c9;
+  box-shadow: 0 0 0 3px rgba(16, 54, 201, 0.18);
+  outline: none;
 }
 
 .wp-svm__avatar img {
@@ -59,17 +80,47 @@
   object-fit: cover;
   object-position: center top;
   display: block;
+  transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.wp-svm__avatar--btn:hover img,
+.wp-svm__avatar--btn:focus-visible img {
+  transform: scale(1.06);
+}
+
+.wp-svm__avatar-hint {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 0.28rem;
+  background: rgba(15, 23, 42, 0.72);
+  color: #fff;
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-align: center;
+  opacity: 0;
+  transform: translateY(4px);
+  transition: opacity 0.25s ease, transform 0.25s ease;
+  pointer-events: none;
+}
+
+.wp-svm__avatar--btn:hover .wp-svm__avatar-hint,
+.wp-svm__avatar--btn:focus-visible .wp-svm__avatar-hint {
+  opacity: 1;
+  transform: translateY(0);
 }
 
 .wp-svm__identity-text {
   min-width: 0;
   flex: 1;
-  padding-top: 0.15rem;
+  padding-top: 0.1rem;
 }
 
 .wp-svm__eyebrow {
-  margin: 0 0 0.2rem;
-  font-size: 0.7rem;
+  margin: 0 0 0.15rem;
+  font-size: 0.68rem;
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -78,7 +129,7 @@
 
 .wp-srm.wp-svm .wp-svm__title {
   margin: 0;
-  font-size: 1.35rem;
+  font-size: 1.15rem;
   font-weight: 700;
   line-height: 1.25;
   color: #212529;
@@ -90,16 +141,16 @@
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 0.4rem;
-  margin-top: 0.55rem;
+  gap: 0.35rem;
+  margin-top: 0.45rem;
 }
 
 .wp-svm__badge {
   display: inline-flex;
   align-items: center;
-  padding: 0.2rem 0.55rem;
+  padding: 0.18rem 0.5rem;
   border-radius: 0.2rem;
-  font-size: 0.72rem;
+  font-size: 0.7rem;
   font-weight: 700;
   letter-spacing: 0.03em;
   text-transform: uppercase;
@@ -135,20 +186,23 @@
 }
 
 .wp-svm__email {
-  margin: 0.45rem 0 0;
-  font-size: 0.875rem;
+  margin: 0.35rem 0 0;
+  font-size: 0.84rem;
   font-weight: 500;
   color: #495057;
   word-break: break-all;
 }
 
 .wp-srm.wp-svm .wp-svm__body {
-  padding: 1.1rem 1.25rem;
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: auto;
+  padding: 0.95rem 1.15rem;
   background: #f1f3f5;
 }
 
 .wp-srm.wp-svm .wp-svm__panel {
-  padding: 1rem 1.1rem;
+  padding: 0.85rem 0.95rem;
   border: 1px solid #ced4da;
   border-radius: 0.25rem;
   background: #fff;
@@ -156,14 +210,14 @@
 }
 
 .wp-srm.wp-svm .wp-svm__panel + .wp-svm__panel {
-  margin-top: 0.85rem;
+  margin-top: 0.75rem;
 }
 
 .wp-srm.wp-svm .wp-adm-view-modal__panel-title {
-  margin: 0 0 0.85rem;
-  padding-bottom: 0.5rem;
+  margin: 0 0 0.7rem;
+  padding-bottom: 0.4rem;
   border-bottom: 2px solid #1036c9;
-  font-size: 0.82rem;
+  font-size: 0.78rem;
   font-weight: 700;
   letter-spacing: 0.04em;
   text-transform: uppercase;
@@ -177,18 +231,18 @@
 }
 
 .wp-srm.wp-svm .wp-adm-view-modal__panel-head {
-  margin-bottom: 0.75rem;
-  padding-bottom: 0.5rem;
+  margin-bottom: 0.65rem;
+  padding-bottom: 0.4rem;
   border-bottom: 2px solid #1036c9;
 }
 
 .wp-srm.wp-svm .wp-adm-view-modal__fields {
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 0.75rem 1rem;
+  gap: 0.65rem 0.85rem;
 }
 
 .wp-srm.wp-svm .wp-adm-view-modal__field-label {
-  font-size: 0.72rem;
+  font-size: 0.7rem;
   font-weight: 700;
   letter-spacing: 0.03em;
   text-transform: uppercase;
@@ -196,37 +250,37 @@
 }
 
 .wp-srm.wp-svm .wp-adm-view-modal__readonly {
-  min-height: 2.35rem;
-  padding: 0.5rem 0.75rem;
+  min-height: 2.2rem;
+  padding: 0.45rem 0.65rem;
   border: 1px solid #ced4da;
   border-radius: 0.25rem;
   background: #f8f9fa;
   color: #212529;
-  font-size: 0.9rem;
+  font-size: 0.875rem;
   font-weight: 500;
 }
 
 .wp-srm.wp-svm .wp-svm__foot {
-  padding: 0.75rem 1.25rem;
+  flex-shrink: 0;
+  padding: 0.7rem 1.15rem;
   background: #fff;
   border-top: 1px solid #dee2e6;
 }
 
 @media (max-width: 991.98px) {
   .wp-srm.wp-svm .wp-srm__dialog {
-    width: min(100%, 100%);
-    height: auto;
+    width: min(46rem, calc(100vw - 2rem));
     max-height: calc(100dvh - 2rem);
   }
 
   .wp-svm__avatar {
-    width: 5.75rem;
-    height: 5.75rem;
-    font-size: 1.55rem;
+    width: 5rem;
+    height: 5rem;
+    font-size: 1.4rem;
   }
 
   .wp-srm.wp-svm .wp-svm__title {
-    font-size: 1.15rem;
+    font-size: 1.1rem;
   }
 }
 
@@ -235,22 +289,26 @@
     padding: 0.75rem;
   }
 
+  .wp-srm.wp-svm .wp-srm__dialog {
+    width: min(100%, calc(100vw - 1.5rem));
+  }
+
   .wp-srm.wp-svm .wp-svm__header {
-    padding: 0.85rem 0.9rem;
+    padding: 0.75rem 0.85rem;
   }
 
   .wp-svm__identity {
-    gap: 0.75rem;
+    gap: 0.7rem;
   }
 
   .wp-svm__avatar {
-    width: 4.75rem;
-    height: 4.75rem;
-    font-size: 1.35rem;
+    width: 4.5rem;
+    height: 4.5rem;
+    font-size: 1.25rem;
   }
 
   .wp-srm.wp-svm .wp-svm__body {
-    padding: 0.85rem 0.9rem;
+    padding: 0.8rem 0.85rem;
   }
 
   .wp-srm.wp-svm .wp-adm-view-modal__fields {
@@ -262,6 +320,6 @@
   }
 
   .wp-srm.wp-svm .wp-svm__foot {
-    padding: 0.7rem 0.9rem;
+    padding: 0.65rem 0.85rem;
   }
 }

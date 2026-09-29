@@ -10,6 +10,7 @@ import { admissionYearLabel, levelLabel } from '../../utils/level'
 import '../students/StudentRecordModal.css'
 import '../../pages/StudentsManagePage.css'
 import './ClassSectionStudentsModal.css'
+import { useBodyScrollLock } from '../../hooks/useBodyScrollLock'
 
 const ANIM_MS = 220
 
@@ -87,9 +88,9 @@ export default function ClassSectionStudentsModal({ sectionRow, onClose }) {
     return () => window.clearTimeout(timer)
   }, [anim, onClose])
 
+  useBodyScrollLock()
+
   useEffect(() => {
-    const prev = document.body.style.overflow
-    document.body.style.overflow = 'hidden'
     function onKey(e) {
       if (e.key === 'Escape') {
         e.preventDefault()
@@ -97,10 +98,7 @@ export default function ClassSectionStudentsModal({ sectionRow, onClose }) {
       }
     }
     window.addEventListener('keydown', onKey)
-    return () => {
-      document.body.style.overflow = prev
-      window.removeEventListener('keydown', onKey)
-    }
+    return () => window.removeEventListener('keydown', onKey)
   }, [requestClose])
 
   useEffect(() => {

@@ -3,12 +3,11 @@ import { Navigate, useNavigate } from 'react-router-dom'
 import { FiEye, FiEyeOff, FiLock, FiMail, FiArrowRight, FiInfo } from 'react-icons/fi'
 import Swal from 'sweetalert2'
 import { useAuth } from '../context/AuthContext'
+import { useBranding } from '../context/BrandingContext'
 import WestPrimeLoader from '../components/common/WestPrimeLoader'
-import logo from '../assets/west_prime_logo.png'
 import 'sweetalert2/dist/sweetalert2.min.css'
 import './LoginPage.css'
 
-const CAMPUS_BG = '/backgrounds/westprime-login-sign-correct.png'
 const CREDENTIALS_ERROR = 'These credentials do not match our records.'
 
 function showForgotPasswordInfo() {
@@ -63,6 +62,13 @@ function resolveLoginError(err) {
     return { general: message || 'Account is deactivated.', fieldErrors: { email: '', password: '' } }
   }
 
+  if (status === 429) {
+    return {
+      general: 'Too many sign-in tries. Please wait 1 minute, then try again.',
+      fieldErrors: { email: '', password: '' },
+    }
+  }
+
   if (status === 422 && errors) {
     const emailMsg = errors.email?.[0] || ''
     const passwordMsg = errors.password?.[0] || ''
@@ -95,6 +101,7 @@ function resolveLoginError(err) {
 
 export default function LoginPage() {
   const { user, login, loading } = useAuth()
+  const { branding } = useBranding()
   const navigate = useNavigate()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -148,14 +155,14 @@ export default function LoginPage() {
   return (
     <div className={`wp-login${ready ? ' is-ready' : ''}`}>
       <aside className="wp-login__visual" aria-hidden="true">
-        <img className="wp-login__visual-img" src={CAMPUS_BG} alt="" />
+        <img className="wp-login__visual-img" src={branding.login_bg_url} alt="" />
         <div className="wp-login__visual-shade" />
 
         <div className="wp-login__brand">
-          <img src={logo} alt="" className="wp-login__brand-logo" />
+          <img src={branding.logo_url} alt="" className="wp-login__brand-logo" />
           <div className="wp-login__brand-text">
-            <span className="wp-login__brand-name">West Prime Horizon Institute, Inc.</span>
-            <span className="wp-login__brand-tag">Digital Academic Portal</span>
+            <span className="wp-login__brand-name">{branding.system_name}</span>
+            <span className="wp-login__brand-tag">{branding.tagline}</span>
           </div>
         </div>
       </aside>
@@ -163,8 +170,8 @@ export default function LoginPage() {
       <main className="wp-login__panel">
         <div className="wp-login__panel-inner">
           <div className="wp-login__heading">
-            <h1>Welcome back</h1>
-            <p>Enter your institutional credentials to continue.</p>
+            <h1>{branding.login_heading}</h1>
+            <p>{branding.login_subtitle}</p>
           </div>
 
           {error && (
@@ -252,7 +259,7 @@ export default function LoginPage() {
           </form>
 
           <p className="wp-login__footer">
-            © {new Date().getFullYear()} West Prime Horizon Institute, Inc.
+            © {new Date().getFullYear()} {branding.footer_text}
           </p>
         </div>
       </main>

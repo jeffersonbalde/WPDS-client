@@ -1,8 +1,9 @@
-import logo from '../../assets/west_prime_logo.png'
+import { useBranding } from '../../context/BrandingContext'
+import defaultLogo from '../../assets/west_prime_logo.png'
 import './WestPrimeLoader.css'
 
 /**
- * Flat branded loading indicator for West Prime Portal.
+ * Flat branded loading indicator for the portal.
  * @param {'fullscreen'|'page'|'inline'|'overlay'} variant
  */
 export default function WestPrimeLoader({
@@ -10,6 +11,8 @@ export default function WestPrimeLoader({
   message = 'Loading…',
   label = 'Loading',
 }) {
+  const { branding } = useBranding()
+  const logoSrc = branding?.logo_url || defaultLogo
   const isFullscreen = variant === 'fullscreen'
   const isInline = variant === 'inline'
 
@@ -39,7 +42,7 @@ export default function WestPrimeLoader({
           <div className="wp-loader__mark" aria-hidden="true">
             <span className="wp-loader__ring" />
             <span className="wp-loader__logo-disc">
-              <img src={logo} alt="" className="wp-loader__logo" draggable={false} />
+              <img src={logoSrc} alt="" className="wp-loader__logo" draggable={false} />
             </span>
           </div>
         )}

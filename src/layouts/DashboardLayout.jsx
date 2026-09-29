@@ -3,13 +3,14 @@ import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom'
 import { FiLogOut, FiMenu, FiChevronDown } from 'react-icons/fi'
 import { toast } from 'react-toastify'
 import { useAuth } from '../context/AuthContext'
+import { useBranding } from '../context/BrandingContext'
 import { NotificationsProvider } from '../context/NotificationsContext'
 import NotificationBell from '../components/notifications/NotificationBell'
 import NotifNavBadge from '../components/notifications/NotifNavBadge'
 import Avatar from '../components/common/Avatar'
 import { getNavForRole, isChildActive, isGroupActive, isNavGroup } from './nav'
 import { wpAlert, wpClose, wpConfirm, wpLoading } from '../utils/wpSwal'
-import logo from '../assets/west_prime_logo.png'
+import { resetBodyScrollLock } from '../hooks/useBodyScrollLock'
 import './dashboard.css'
 
 function groupKey(sectionHeading, item) {
@@ -18,6 +19,7 @@ function groupKey(sectionHeading, item) {
 
 export default function DashboardLayout() {
   const { user, logout } = useAuth()
+  const { branding } = useBranding()
   const navigate = useNavigate()
   const location = useLocation()
   const [collapsed, setCollapsed] = useState(false)
@@ -26,6 +28,12 @@ export default function DashboardLayout() {
   const menuRef = useRef(null)
   const sections = getNavForRole(user?.role)
   const notificationsEnabled = ['teacher', 'registrar'].includes(user?.role)
+
+  useEffect(() => {
+    // Clear any leftover body scroll lock when navigating between pages
+    // (e.g. modal unmounted mid-animation / HMR edge cases).
+    resetBodyScrollLock()
+  }, [location.pathname])
 
   useEffect(() => {
     localStorage.removeItem('wpds_dash_theme')
@@ -130,9 +138,9 @@ export default function DashboardLayout() {
 
       <aside className="wp-dash__sidebar" aria-label="Main navigation">
         <NavLink to="/" end className="wp-dash__brand" onClick={closeMobileNav}>
-          <img src={logo} alt="West Prime" className="wp-dash__brand-logo" />
+          <img src={branding.logo_url} alt={branding.system_short_name} className="wp-dash__brand-logo" />
           <span className="wp-dash__brand-text">
-            <span className="wp-dash__brand-title">West Prime Horizon Institute, Inc.</span>
+            <span className="wp-dash__brand-title">{branding.system_name}</span>
           </span>
         </NavLink>
 
@@ -269,7 +277,7 @@ export default function DashboardLayout() {
 
         <footer className="wp-dash__footer">
           <div className="wp-dash__footer-inner">
-            <span>© {new Date().getFullYear()} West Prime Horizon Institute, Inc.</span>
+            <span>© {new Date().getFullYear()} {branding.footer_text}</span>
           </div>
         </footer>
       </div>

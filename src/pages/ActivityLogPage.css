@@ -1,0 +1,317 @@
+.wp-audit__note {
+  margin: 0 0 0.85rem;
+  padding: 0.7rem 0.9rem;
+  border: 1px solid #dee2e6;
+  border-left: 4px solid #1036c9;
+  border-radius: 0.25rem;
+  background: #f8fafc;
+  color: #495057;
+  font-size: 0.85rem;
+  line-height: 1.45;
+}
+
+.wp-audit__note strong {
+  color: #1e293b;
+  font-weight: 600;
+}
+
+.wp-audit__schedule {
+  margin: 0 0 0.85rem;
+  padding: 0.9rem 1rem;
+  border: 1px solid #dee2e6;
+  border-radius: 0.25rem;
+  background: #fff;
+}
+
+.wp-audit__schedule-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 0.85rem;
+}
+
+.wp-audit__schedule-head h2 {
+  margin: 0;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #1e293b;
+}
+
+.wp-audit__schedule-head p {
+  margin: 0.25rem 0 0;
+  font-size: 0.82rem;
+  color: #64748b;
+  line-height: 1.45;
+  max-width: 40rem;
+}
+
+.wp-audit__badge {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  padding: 0.2rem 0.55rem;
+  border-radius: 0.2rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  border: 1px solid transparent;
+}
+
+.wp-audit__badge.is-on {
+  color: #166534;
+  background: #f0fdf4;
+  border-color: #bbf7d0;
+}
+
+.wp-audit__badge.is-off {
+  color: #64748b;
+  background: #f8fafc;
+  border-color: #dee2e6;
+}
+
+.wp-audit__schedule-form {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: end;
+  gap: 0.75rem 1rem;
+}
+
+.wp-audit__check-field {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  margin: 0;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #334155;
+  min-height: 2.15rem;
+}
+
+.wp-audit__check-field input {
+  width: 1rem;
+  height: 1rem;
+  accent-color: #1036c9;
+}
+
+.wp-audit__field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.28rem;
+  margin: 0;
+  min-width: 10rem;
+}
+
+.wp-audit__field span {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #64748b;
+}
+
+.wp-audit__field .form-select {
+  min-width: 10rem;
+  min-height: 2.15rem;
+  font-size: 0.875rem;
+  border-color: #ced4da;
+  border-radius: 0.25rem;
+}
+
+.wp-audit__schedule-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+}
+
+.wp-audit__schedule-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem 1rem;
+  margin-top: 0.85rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid #e9ecef;
+  font-size: 0.8rem;
+  color: #64748b;
+}
+
+.wp-audit__filters {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 0.75rem;
+  margin-bottom: 0.85rem;
+  padding: 0.85rem 1rem;
+  background: #fff;
+  border: 1px solid #dee2e6;
+  border-radius: 0.25rem;
+}
+
+.wp-audit__filter {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  margin: 0;
+  min-width: 0;
+}
+
+.wp-audit__filter span {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #64748b;
+  line-height: 1.2;
+}
+
+.wp-audit__filter .form-select,
+.wp-audit__filter .form-control {
+  font-family: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  font-size: 0.875rem;
+  font-weight: 400;
+  color: #212529;
+  border: 1px solid #ced4da;
+  border-radius: 0.25rem;
+  min-height: 2.25rem;
+  background: #fff;
+}
+
+.wp-audit__filter .form-select {
+  width: 14rem;
+  max-width: 100%;
+}
+
+.wp-audit__filter .form-control[type="date"] {
+  width: 11.5rem;
+  max-width: 100%;
+  padding-right: 0.55rem;
+}
+
+.wp-audit__filter .form-select:focus,
+.wp-audit__filter .form-control:focus {
+  border-color: #1036c9;
+  outline: 2px solid rgba(16, 54, 201, 0.18);
+  outline-offset: 0;
+  box-shadow: none;
+}
+
+.wp-audit__records {
+  margin-left: auto;
+}
+
+.wp-audit__filter-actions {
+  display: flex;
+  align-items: center;
+  min-height: 2.25rem;
+}
+
+.wp-audit__check {
+  width: 2.5rem;
+  text-align: center;
+}
+
+.wp-audit__check input {
+  width: 1rem;
+  height: 1rem;
+  accent-color: #1036c9;
+  cursor: pointer;
+}
+
+.wp-audit__row-selected td {
+  background: #eef2ff !important;
+}
+
+.wp-audit__action {
+  display: block;
+  font-weight: 500;
+  color: #212529;
+  white-space: nowrap;
+}
+
+.wp-audit__when {
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+.wp-audit__user {
+  font-weight: 500;
+  color: #1e293b;
+  max-width: 14rem;
+}
+
+.wp-audit__record {
+  max-width: 22rem;
+  line-height: 1.4;
+  color: #334155;
+  word-break: break-word;
+}
+
+.wp-audit .wp-flat__btn--danger {
+  background: #dc3545;
+  border-color: #dc3545;
+  color: #fff;
+}
+
+.wp-audit .wp-flat__btn--danger:hover:not(:disabled) {
+  background: #bb2d3b;
+  border-color: #b02a37;
+  color: #fff;
+}
+
+.wp-audit__table .wp-flat__actions {
+  flex-wrap: nowrap;
+}
+
+@media (max-width: 991.98px) {
+  .wp-audit__records {
+    margin-left: 0;
+  }
+
+  .wp-audit__user,
+  .wp-audit__record {
+    max-width: 12rem;
+  }
+}
+
+@media (max-width: 767.98px) {
+  .wp-audit__schedule-form {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .wp-audit__field .form-select,
+  .wp-audit__schedule-actions .wp-flat__btn {
+    width: 100%;
+  }
+
+  .wp-audit__filters {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .wp-audit__filter .form-select,
+  .wp-audit__filter .form-control[type="date"],
+  .wp-audit__records,
+  .wp-audit__records .wp-flat__control {
+    width: 100%;
+  }
+
+  .wp-audit__filter-actions {
+    width: 100%;
+  }
+
+  .wp-audit__filter-actions .wp-flat__btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .wp-audit__table .wp-flat__actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .wp-audit__table .wp-flat__actions .wp-flat__btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .wp-audit__user,
+  .wp-audit__record {
+    max-width: none;
+  }
+}

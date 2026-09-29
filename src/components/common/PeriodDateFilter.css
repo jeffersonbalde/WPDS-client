@@ -1,0 +1,116 @@
+.wp-period-filter {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 0.65rem 0.85rem;
+  margin: 0 0 1rem;
+  padding: 0.75rem 0.9rem;
+  border: 1px solid #dee2e6;
+  border-radius: 0.25rem;
+  background: #fff;
+}
+
+.wp-period-filter__field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.28rem;
+  min-width: 0;
+  margin: 0;
+}
+
+.wp-period-filter__field > span {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #64748b;
+}
+
+.wp-period-filter__field .form-select,
+.wp-period-filter__field .form-control {
+  min-width: 10.5rem;
+  min-height: 2.35rem;
+  font-size: 0.875rem;
+  border-color: #ced4da;
+  border-radius: 0.25rem;
+}
+
+.wp-period-filter__field .form-select:focus,
+.wp-period-filter__field .form-control:focus {
+  border-color: #1036c9;
+  box-shadow: 0 0 0 0.2rem rgba(16, 54, 201, 0.15);
+}
+
+.wp-period-filter__hint {
+  margin: 0;
+  flex: 1 1 10rem;
+  align-self: center;
+  font-size: 0.82rem;
+  color: #64748b;
+  line-height: 1.35;
+  min-width: 0;
+}
+
+.wp-period-filter__hint strong {
+  color: #1e293b;
+  font-weight: 600;
+}
+
+.wp-period-filter__clear {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  align-self: flex-end;
+  min-height: 2.35rem;
+  padding: 0.4rem 0.85rem;
+  margin: 0;
+  border: 1px solid #ced4da;
+  border-radius: 0.25rem;
+  background: #fff;
+  color: #1036c9;
+  font-size: 0.84rem;
+  font-weight: 600;
+  line-height: 1;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+
+.wp-period-filter__clear svg {
+  flex-shrink: 0;
+  display: block;
+}
+
+.wp-period-filter__clear:hover:not(:disabled) {
+  background: #f8fafc;
+  border-color: #1036c9;
+  color: #0d2ba8;
+}
+
+.wp-period-filter__clear:focus-visible {
+  outline: none;
+  border-color: #1036c9;
+}
+
+.wp-period-filter__clear:disabled {
+  opacity: 0.65;
+  cursor: wait;
+}
+
+@media (max-width: 575.98px) {
+  .wp-period-filter__field {
+    flex: 1 1 100%;
+  }
+
+  .wp-period-filter__field .form-select,
+  .wp-period-filter__field .form-control {
+    min-width: 0;
+    width: 100%;
+  }
+
+  .wp-period-filter__clear {
+    width: 100%;
+    align-self: stretch;
+  }
+}

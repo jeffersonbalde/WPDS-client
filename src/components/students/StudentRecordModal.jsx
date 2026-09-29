@@ -4,6 +4,8 @@ import { FiArrowLeft, FiX } from 'react-icons/fi'
 import { toast } from 'react-toastify'
 import api from '../../api/client'
 import WestPrimeLoader from '../common/WestPrimeLoader'
+import Avatar from '../common/Avatar'
+import PhotoLightbox from '../common/PhotoLightbox'
 import StudentProfilePanels from '../student-profile/StudentProfilePanels'
 import { apiErrorMessage } from '../../utils/apiError'
 import {
@@ -12,6 +14,7 @@ import {
 } from '../../utils/studentProfile'
 import '../../pages/ProfilePage.css'
 import './StudentRecordModal.css'
+import { useBodyScrollLock } from '../../hooks/useBodyScrollLock'
 
 const ANIM_MS = 220
 
@@ -120,6 +123,7 @@ export default function StudentRecordModal({ studentId, onClose }) {
   const [tab, setTab] = useState('info')
   const [selectedAdmissionId, setSelectedAdmissionId] = useState(null)
   const [admissionSearch, setAdmissionSearch] = useState('')
+  const [photoOpen, setPhotoOpen] = useState(false)
 
   const requestClose = useCallback(() => {
     if (closingRef.current) return
@@ -176,22 +180,23 @@ export default function StudentRecordModal({ studentId, onClose }) {
     return () => { cancelled = true }
   }, [studentId, requestClose])
 
-  useEffect(() => {
-    const prev = document.body.style.overflow
-    document.body.style.overflow = 'hidden'
+  useBodyScrollLock()
 
+  useEffect(() => {
     function onKey(e) {
       if (e.key === 'Escape') {
+        if (photoOpen) return
         if (selectedAdmissionId) setSelectedAdmissionId(null)
         else requestClose()
       }
     }
     window.addEventListener('keydown', onKey)
-    return () => {
-      document.body.style.overflow = prev
-      window.removeEventListener('keydown', onKey)
-    }
-  }, [requestClose, selectedAdmissionId])
+    return () => window.removeEventListener('keydown', onKey)
+  }, [requestClose, selectedAdmissionId, photoOpen])
+
+  const displayName = fullName(profile)
+  const avatarUrl = profile?.avatar_url || profile?.user?.avatar_url || null
+  const hasPhoto = Boolean(avatarUrl)
 
   const admissions = useMemo(
     () => sortAdmissions(Array.isArray(profile?.admissions) ? profile.admissions : []),
@@ -245,47 +250,67 @@ export default function StudentRecordModal({ studentId, onClose }) {
         aria-labelledby={titleId}
       >
         <header className="wp-srm__header">
-          <div className="wp-srm__header-main">
-            <p className="wp-srm__eyebrow">Student record</p>
-            <h2 id={titleId} className="wp-srm__title">
-              {loading ? 'Loading…' : fullName(profile) || 'Student'}
-            </h2>
-            <div className="wp-srm__meta" aria-hidden={loading || !profile}>
-              {loading || !profile ? (
-                <>
-                  <span className="wp-srm__chip wp-srm__chip--skeleton" />
-                  <span className="wp-srm__chip wp-srm__chip--skeleton is-short" />
-                </>
+          <div className="wp-srm__header-top">
+            <div className="wp-srm__identity">
+              {hasPhoto ? (
+                <button
+                  type="button"
+                  className="wp-srm__avatar wp-srm__avatar--btn has-photo"
+                  onClick={() => setPhotoOpen(true)}
+                  title="View photo"
+                  aria-label={`View photo of ${displayName || 'student'}`}
+                >
+                  <Avatar src={avatarUrl} name={displayName || 'Student'} />
+                  <span className="wp-srm__avatar-hint" aria-hidden>View</span>
+                </button>
               ) : (
-                <>
-                  <span className="wp-srm__chip">{profile.student_no}</span>
-                  <span className="wp-srm__chip">{levelLabel(profile.academic_level)}</span>
-                </>
-              )}
-            </div>
-            {!loading && profile ? (
-              <div className="wp-srm__timestamps">
-                <div className="wp-srm__timestamp">
-                  <span className="wp-srm__timestamp-label">Registered</span>
-                  <span className="wp-srm__timestamp-value">{formatDateTime(profile.created_at)}</span>
+                <div className="wp-srm__avatar" aria-hidden={loading || !profile}>
+                  <Avatar src={null} name={displayName || (loading ? '' : 'Student')} />
                 </div>
-                <div className="wp-srm__timestamp">
-                  <span className="wp-srm__timestamp-label">Last updated</span>
-                  <span className="wp-srm__timestamp-value">{formatDateTime(profile.updated_at)}</span>
+              )}
+              <div className="wp-srm__header-main">
+                <p className="wp-srm__eyebrow">Student record</p>
+                <h2 id={titleId} className="wp-srm__title">
+                  {loading ? 'Loading…' : displayName || 'Student'}
+                </h2>
+                <div className="wp-srm__meta" aria-hidden={loading || !profile}>
+                  {loading || !profile ? (
+                    <>
+                      <span className="wp-srm__chip wp-srm__chip--skeleton" />
+                      <span className="wp-srm__chip wp-srm__chip--skeleton is-short" />
+                    </>
+                  ) : (
+                    <>
+                      <span className="wp-srm__chip">{profile.student_no}</span>
+                      <span className="wp-srm__chip">{levelLabel(profile.academic_level)}</span>
+                    </>
+                  )}
                 </div>
               </div>
-            ) : null}
+            </div>
+            <div className="wp-srm__header-actions">
+              <button
+                type="button"
+                className="wp-srm__icon-btn"
+                onClick={requestClose}
+                aria-label="Close"
+              >
+                <FiX size={20} />
+              </button>
+            </div>
           </div>
-          <div className="wp-srm__header-actions">
-            <button
-              type="button"
-              className="wp-srm__icon-btn"
-              onClick={requestClose}
-              aria-label="Close"
-            >
-              <FiX size={20} />
-            </button>
-          </div>
+          {!loading && profile ? (
+            <dl className="wp-srm__timestamps">
+              <div className="wp-srm__timestamp">
+                <dt className="wp-srm__timestamp-label">Registered</dt>
+                <dd className="wp-srm__timestamp-value">{formatDateTime(profile.created_at)}</dd>
+              </div>
+              <div className="wp-srm__timestamp">
+                <dt className="wp-srm__timestamp-label">Last updated</dt>
+                <dd className="wp-srm__timestamp-value">{formatDateTime(profile.updated_at)}</dd>
+              </div>
+            </dl>
+          ) : null}
         </header>
 
         <nav className="wp-srm__tabs" aria-label="Record sections">
@@ -526,6 +551,12 @@ export default function StudentRecordModal({ studentId, onClose }) {
           </button>
         </footer>
       </div>
+
+      <PhotoLightbox
+        src={photoOpen && avatarUrl ? avatarUrl : null}
+        title={displayName || 'Photo'}
+        onClose={() => setPhotoOpen(false)}
+      />
     </div>
   )
 }
