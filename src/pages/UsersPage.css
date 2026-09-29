@@ -111,13 +111,22 @@
   border-bottom: 1px solid #dee2e6;
 }
 
-.wp-users__card-avatar img {
+.wp-users__card-avatar img,
+.wp-users__card-avatar .wp-avatar--photo {
   width: 100%;
   height: 100%;
   object-fit: cover;
   object-position: center top;
   display: block;
   transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1), filter 0.3s ease;
+}
+
+.wp-users__card-avatar .wp-avatar--fallback {
+  width: 100%;
+  height: 100%;
+  display: grid;
+  place-items: center;
+  line-height: 1;
 }
 
 .wp-users__card-avatar-hint {
