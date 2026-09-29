@@ -24,7 +24,8 @@ const ALL_ROLES = [
 ]
 
 const AVATAR_ACCEPT = 'image/png,image/jpeg,image/webp'
-const AVATAR_MAX_BYTES = 2 * 1024 * 1024
+const AVATAR_MAX_BYTES = 20 * 1024 * 1024
+const AVATAR_MAX_LABEL = '20 MB'
 
 const emptyMeta = { current_page: 1, last_page: 1, total: 0, from: 0, to: 0 }
 const emptySummary = { total: 0, active: 0, inactive: 0, students: 0 }
@@ -121,7 +122,7 @@ export default function UsersPage() {
       return
     }
     if (file.size > AVATAR_MAX_BYTES) {
-      toast.error('Photo must be 2MB or smaller.')
+      toast.error(`Photo must be ${AVATAR_MAX_LABEL} or smaller.`)
       return
     }
 
@@ -318,9 +319,11 @@ export default function UsersPage() {
             {Array.from({ length: Math.min(perPage, 8) }).map((_, i) => (
               <div key={i} className="wp-users__card wp-users__card--skeleton" aria-hidden>
                 <div className="wp-users__card-avatar wp-users__skeleton-avatar" />
-                <div className="wp-users__skeleton-bar wp-users__skeleton-bar--wide" />
-                <div className="wp-users__skeleton-bar wp-users__skeleton-bar--pill" />
-                <div className="wp-users__skeleton-bar" />
+                <div className="wp-users__card-body">
+                  <div className="wp-users__skeleton-bar wp-users__skeleton-bar--wide" />
+                  <div className="wp-users__skeleton-bar wp-users__skeleton-bar--pill" />
+                  <div className="wp-users__skeleton-bar" />
+                </div>
               </div>
             ))}
           </div>
@@ -360,14 +363,16 @@ export default function UsersPage() {
                     />
                   </label>
 
-                  <h3 className="wp-users__card-name" title={u.name}>{u.name}</h3>
-                  <span className="wp-users__role-pill">{roleLabel(u.role)}</span>
-                  <p className="wp-users__card-email" title={u.email}>{u.email}</p>
-                  {subId ? <p className="wp-users__card-meta">{subId}</p> : null}
-                  <span className={`wp-users__status-pill${u.is_active ? ' is-active' : ' is-inactive'}`}>
-                    <span className="wp-users__status-dot" aria-hidden />
-                    {u.is_active ? 'Active' : 'Inactive'}
-                  </span>
+                  <div className="wp-users__card-body">
+                    <h3 className="wp-users__card-name" title={u.name}>{u.name}</h3>
+                    <span className="wp-users__role-pill">{roleLabel(u.role)}</span>
+                    <p className="wp-users__card-email" title={u.email}>{u.email}</p>
+                    {subId ? <p className="wp-users__card-meta">{subId}</p> : null}
+                    <span className={`wp-users__status-pill${u.is_active ? ' is-active' : ' is-inactive'}`}>
+                      <span className="wp-users__status-dot" aria-hidden />
+                      {u.is_active ? 'Active' : 'Inactive'}
+                    </span>
+                  </div>
 
                   <div className="wp-users__card-actions">
                     <button

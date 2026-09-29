@@ -142,33 +142,47 @@ export default function StaffUserViewModal({ userId, onClose, baseUrl = '/users'
     ]
   }, [staff])
 
-  const headerContext = user
-    ? `${user.name || 'User'} · ${roleLabel(user.role)}`
-    : 'Loading user…'
-
   const animClass = anim === 'open' ? ' is-open' : anim === 'leave' ? ' is-leave' : ''
 
   return (
     <div
-      className={`wp-srm wp-adm-view-modal${animClass}`}
+      className={`wp-srm wp-adm-view-modal wp-svm${animClass}`}
       role="presentation"
       onMouseDown={(e) => {
         if (e.target === e.currentTarget) requestClose()
       }}
     >
       <div className="wp-srm__dialog" role="dialog" aria-modal="true" aria-labelledby={titleId}>
-        <header className="wp-srm__header">
-          <div className="wp-adm-view-modal__head wp-svm__head">
-            <div className="wp-svm__avatar">
+        <header className="wp-srm__header wp-svm__header">
+          <div className="wp-svm__identity">
+            <div className="wp-svm__avatar" aria-hidden={!user}>
               {user?.avatar_url ? (
                 <img src={user.avatar_url} alt="" />
               ) : (
                 <span>{initialsOf(user?.name)}</span>
               )}
             </div>
-            <div>
-              <h2 id={titleId} className="wp-srm__title">View user</h2>
-              <p className="wp-adm-view-modal__context">{headerContext}</p>
+            <div className="wp-svm__identity-text">
+              <p className="wp-svm__eyebrow">User record</p>
+              <h2 id={titleId} className="wp-srm__title wp-svm__title">
+                {loading ? 'Loading user…' : (user?.name || 'View user')}
+              </h2>
+              <div className="wp-svm__meta-row">
+                <span className="wp-svm__badge wp-svm__badge--role">
+                  {user ? roleLabel(user.role) : '—'}
+                </span>
+                {user ? (
+                  <span className={`wp-svm__badge wp-svm__badge--status${user.is_active ? ' is-active' : ' is-inactive'}`}>
+                    {user.is_active ? 'Active' : 'Inactive'}
+                  </span>
+                ) : null}
+                {staff?.employee_no ? (
+                  <span className="wp-svm__badge wp-svm__badge--id">Emp: {staff.employee_no}</span>
+                ) : null}
+              </div>
+              {user?.email ? (
+                <p className="wp-svm__email">{user.email}</p>
+              ) : null}
             </div>
           </div>
           <button type="button" className="wp-srm__icon-btn" onClick={requestClose} aria-label="Close">
@@ -176,14 +190,14 @@ export default function StaffUserViewModal({ userId, onClose, baseUrl = '/users'
           </button>
         </header>
 
-        <div className="wp-srm__body">
+        <div className="wp-srm__body wp-svm__body">
           {loading ? (
             <div className="wp-adm-view-modal__state">
               <WestPrimeLoader variant="inline" message="Loading user…" label="Loading" />
             </div>
           ) : (
             <>
-              <section className="wp-adm-view-modal__panel" aria-label="Account details">
+              <section className="wp-adm-view-modal__panel wp-svm__panel" aria-label="Account details">
                 <h3 className="wp-adm-view-modal__panel-title">Account details</h3>
                 <div className="wp-adm-view-modal__fields">
                   {accountFields.map((field) => (
@@ -198,7 +212,7 @@ export default function StaffUserViewModal({ userId, onClose, baseUrl = '/users'
                 </div>
               </section>
 
-              <section className="wp-adm-view-modal__panel" aria-label="Staff profile">
+              <section className="wp-adm-view-modal__panel wp-svm__panel" aria-label="Staff profile">
                 <h3 className="wp-adm-view-modal__panel-title">Staff profile</h3>
                 <div className="wp-adm-view-modal__fields">
                   {staffFields.map((field) => (
@@ -214,7 +228,7 @@ export default function StaffUserViewModal({ userId, onClose, baseUrl = '/users'
               </section>
 
               {isTeacher ? (
-                <section className="wp-adm-view-modal__panel wp-adm-view-modal__panel--subjects" aria-label="Assigned class sections">
+                <section className="wp-adm-view-modal__panel wp-adm-view-modal__panel--subjects wp-svm__panel" aria-label="Assigned class sections">
                   <div className="wp-adm-view-modal__panel-head">
                     <h3 className="wp-adm-view-modal__panel-title">Assigned class sections</h3>
                     <span className="wp-adm-view-modal__units">{classSections.length} section{classSections.length === 1 ? '' : 's'}</span>
@@ -275,6 +289,12 @@ export default function StaffUserViewModal({ userId, onClose, baseUrl = '/users'
             </>
           )}
         </div>
+
+        <footer className="wp-srm__footer wp-adm-view-modal__foot wp-svm__foot">
+          <button type="button" className="wp-flat__btn wp-flat__btn--secondary" onClick={requestClose}>
+            Close
+          </button>
+        </footer>
       </div>
 
       {viewSectionRow ? createPortal(

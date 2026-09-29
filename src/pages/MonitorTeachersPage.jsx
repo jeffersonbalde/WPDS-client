@@ -196,9 +196,11 @@ export default function MonitorTeachersPage() {
             {Array.from({ length: Math.min(perPage, 8) }).map((_, i) => (
               <div key={i} className="wp-users__card wp-users__card--skeleton" aria-hidden>
                 <div className="wp-users__card-avatar wp-users__skeleton-avatar" />
-                <div className="wp-users__skeleton-bar wp-users__skeleton-bar--wide" />
-                <div className="wp-users__skeleton-bar wp-users__skeleton-bar--pill" />
-                <div className="wp-users__skeleton-bar" />
+                <div className="wp-users__card-body">
+                  <div className="wp-users__skeleton-bar wp-users__skeleton-bar--wide" />
+                  <div className="wp-users__skeleton-bar wp-users__skeleton-bar--pill" />
+                  <div className="wp-users__skeleton-bar" />
+                </div>
               </div>
             ))}
           </div>
@@ -222,15 +224,17 @@ export default function MonitorTeachersPage() {
                     </div>
                   </div>
 
-                  <h3 className="wp-users__card-name" title={t.name}>{t.name}</h3>
-                  <span className="wp-users__role-pill">Teacher</span>
-                  <p className="wp-users__card-email" title={t.email}>{t.email}</p>
-                  {subId ? <p className="wp-users__card-meta">{subId}</p> : null}
-                  <p className="wp-users__card-meta">{sections} class section{sections === 1 ? '' : 's'}</p>
-                  <span className={`wp-users__status-pill${t.is_active ? ' is-active' : ' is-inactive'}`}>
-                    <span className="wp-users__status-dot" aria-hidden />
-                    {t.is_active ? 'Active' : 'Inactive'}
-                  </span>
+                  <div className="wp-users__card-body">
+                    <h3 className="wp-users__card-name" title={t.name}>{t.name}</h3>
+                    <span className="wp-users__role-pill">Teacher</span>
+                    <p className="wp-users__card-email" title={t.email}>{t.email}</p>
+                    {subId ? <p className="wp-users__card-meta">{subId}</p> : null}
+                    <p className="wp-users__card-meta">{sections} class section{sections === 1 ? '' : 's'}</p>
+                    <span className={`wp-users__status-pill${t.is_active ? ' is-active' : ' is-inactive'}`}>
+                      <span className="wp-users__status-dot" aria-hidden />
+                      {t.is_active ? 'Active' : 'Inactive'}
+                    </span>
+                  </div>
 
                   <div className="wp-users__card-actions">
                     <button

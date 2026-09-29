@@ -33,7 +33,7 @@
 /* —— User cards grid (staff-directory / gov-portal style) —— */
 .wp-users__grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(15.5rem, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(16.5rem, 1fr));
   gap: 1rem;
   padding: 1rem;
 }
@@ -42,22 +42,23 @@
   position: relative;
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: stretch;
   text-align: center;
   background: #fff;
-  border: 1px solid #e2e8f0;
+  border: 1px solid #ced4da;
   border-top: 3px solid #64748b;
-  border-radius: 0.5rem;
-  padding: 1.15rem 1rem 1rem;
+  border-radius: 0.25rem;
+  padding: 0;
   width: 100%;
-  max-width: 20rem;
-  margin: 0 auto;
-  transition: box-shadow 0.15s ease, transform 0.15s ease;
+  max-width: none;
+  margin: 0;
+  overflow: hidden;
+  transition: box-shadow 0.15s ease, border-color 0.15s ease;
 }
 
 .wp-users__card:hover {
-  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.09);
-  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(15, 23, 42, 0.08);
+  border-color: #adb5bd;
 }
 
 .wp-users__card--teacher { border-top-color: #1036c9; }
@@ -67,47 +68,72 @@
 .wp-users__card--admin { border-top-color: #7c3aed; }
 .wp-users__card--stakeholder { border-top-color: #0ea5e9; }
 
+/* Full-width photo — consistent square across every card */
 .wp-users__card-avatar-wrap {
   position: relative;
   display: block;
-  margin-bottom: 0.65rem;
+  width: 100%;
+  margin: 0;
+  border-radius: 0;
+}
+
+label.wp-users__card-avatar-wrap {
   cursor: pointer;
-  border-radius: 0.6rem;
 }
 
 .wp-users__card-avatar {
-  width: 9rem;
-  height: 9rem;
-  border-radius: 0.6rem;
-  background: #eef2f7;
-  color: #475569;
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  height: auto;
+  border-radius: 0;
+  background: #e9ecef;
+  color: #495057;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 2rem;
+  font-size: clamp(2.25rem, 8vw, 3rem);
   font-weight: 700;
+  letter-spacing: 0.02em;
   overflow: hidden;
-  border: 1px solid #e2e8f0;
-  transition: box-shadow 0.15s ease, filter 0.15s ease;
+  border: none;
+  border-bottom: 1px solid #dee2e6;
+  transition: filter 0.15s ease;
 }
 
 .wp-users__card-avatar img {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  object-position: center top;
+  display: block;
 }
 
-.wp-users__card-avatar-wrap:hover .wp-users__card-avatar {
-  box-shadow: 0 0 0 3px rgba(16, 54, 201, 0.25);
-  filter: brightness(0.94);
+label.wp-users__card-avatar-wrap:hover .wp-users__card-avatar {
+  filter: brightness(0.92);
+}
+
+label.wp-users__card-avatar-wrap:hover .wp-users__card-avatar::after {
+  content: "Change photo";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 0.45rem 0.5rem;
+  background: rgba(15, 23, 42, 0.72);
+  color: #fff;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-align: center;
 }
 
 .wp-users__card-avatar-busy {
   position: absolute;
   inset: 0;
-  border-radius: 0.6rem;
-  background: rgba(255, 255, 255, 0.7);
-  border: 2px solid transparent;
+  border-radius: 0;
+  background: rgba(255, 255, 255, 0.72);
+  border: 3px solid transparent;
   border-top-color: #1036c9;
   animation: wp-users-spin 0.7s linear infinite;
 }
@@ -116,11 +142,20 @@
   to { transform: rotate(360deg); }
 }
 
+.wp-users__card-body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0.85rem 0.85rem 0.95rem;
+  min-width: 0;
+  flex: 1 1 auto;
+}
+
 .wp-users__card-name {
-  margin: 0 0 0.3rem;
+  margin: 0 0 0.35rem;
   font-size: 0.95rem;
   font-weight: 700;
-  color: #1e293b;
+  color: #212529;
   max-width: 100%;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -130,15 +165,16 @@
 .wp-users__role-pill {
   display: inline-flex;
   align-items: center;
-  padding: 0.15rem 0.6rem;
-  border-radius: 999px;
+  padding: 0.18rem 0.65rem;
+  border-radius: 0.2rem;
   background: #eef2f7;
-  color: #475569;
-  font-size: 0.7rem;
+  color: #334155;
+  font-size: 0.68rem;
   font-weight: 700;
-  letter-spacing: 0.03em;
+  letter-spacing: 0.04em;
   text-transform: uppercase;
   margin-bottom: 0.55rem;
+  border: 1px solid #e2e8f0;
 }
 
 .wp-users__card-email {
@@ -161,23 +197,26 @@
   display: inline-flex;
   align-items: center;
   gap: 0.35rem;
-  padding: 0.15rem 0.6rem;
-  border-radius: 999px;
+  padding: 0.18rem 0.65rem;
+  border-radius: 0.2rem;
   font-size: 0.72rem;
   font-weight: 600;
   background: #f1f5f9;
   color: #64748b;
-  margin-bottom: 0.9rem;
+  margin-bottom: 0;
+  border: 1px solid #e2e8f0;
 }
 
 .wp-users__status-pill.is-active {
-  background: #d1fae5;
-  color: #047857;
+  background: #d1e7dd;
+  color: #0f5132;
+  border-color: #badbcc;
 }
 
 .wp-users__status-pill.is-inactive {
-  background: #fee2e2;
-  color: #b91c1c;
+  background: #f8d7da;
+  color: #842029;
+  border-color: #f5c2c7;
 }
 
 .wp-users__status-dot {
@@ -192,15 +231,18 @@
   flex-wrap: wrap;
   justify-content: center;
   gap: 0.4rem;
-  padding-top: 0.85rem;
+  padding: 0.75rem 0.85rem 0.9rem;
   margin-top: auto;
-  border-top: 1px solid #f1f5f9;
+  border-top: 1px solid #e9ecef;
   width: 100%;
+  box-sizing: border-box;
+  background: #f8f9fa;
 }
 
 /* —— Loading skeleton cards —— */
 .wp-users__card--skeleton {
   cursor: default;
+  pointer-events: none;
 }
 
 .wp-users__skeleton-avatar,
@@ -208,14 +250,20 @@
   background: linear-gradient(90deg, #eef2f7 25%, #f8fafc 50%, #eef2f7 75%);
   background-size: 200% 100%;
   animation: wp-users-shimmer 1.2s ease-in-out infinite;
-  border-radius: 0.3rem;
+  border-radius: 0.2rem;
 }
 
 .wp-users__skeleton-avatar {
-  width: 9rem;
-  height: 9rem;
-  border-radius: 0.6rem;
-  margin-bottom: 0.65rem;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  height: auto;
+  border-radius: 0;
+  margin-bottom: 0;
+  border-bottom: 1px solid #dee2e6;
+}
+
+.wp-users__card--skeleton .wp-users__card-body {
+  width: 100%;
 }
 
 .wp-users__skeleton-bar {
@@ -232,7 +280,6 @@
 .wp-users__skeleton-bar--pill {
   width: 45%;
   height: 0.6rem;
-  border-radius: 999px;
 }
 
 @keyframes wp-users-shimmer {

@@ -9,7 +9,8 @@ import './AddUserModal.css'
 
 const ANIM_MS = 220
 const AVATAR_ACCEPT = 'image/png,image/jpeg,image/webp'
-const AVATAR_MAX_BYTES = 2 * 1024 * 1024
+const AVATAR_MAX_BYTES = 20 * 1024 * 1024
+const AVATAR_MAX_LABEL = '20 MB'
 
 const CREATE_ROLES = [
   { value: 'teacher', label: 'Teacher' },
@@ -143,7 +144,7 @@ export default function AddUserModal({ onClose, onSaved }) {
       return
     }
     if (file.size > AVATAR_MAX_BYTES) {
-      setErrors((prev) => ({ ...prev, avatar: 'Photo must be 2MB or smaller.' }))
+      setErrors((prev) => ({ ...prev, avatar: `Photo must be ${AVATAR_MAX_LABEL} or smaller.` }))
       e.target.value = ''
       return
     }
@@ -237,35 +238,55 @@ export default function AddUserModal({ onClose, onSaved }) {
 
         <form className="wp-user-modal__form" onSubmit={submit} noValidate>
           <div className="wp-srm__body">
-            <div className="wp-user-modal__avatar-picker">
-              <div className="wp-user-modal__avatar-preview">
-                {avatarPreview ? <img src={avatarPreview} alt="" /> : <FiUser size={26} />}
-              </div>
-              <div className="wp-user-modal__avatar-actions">
-                <label className="wp-flat__btn wp-flat__btn--secondary wp-flat__btn--sm" htmlFor="add-user-avatar-input">
-                  <FiCamera size={13} />
+            <div className={`wp-user-modal__avatar-picker${avatarPreview ? ' has-photo' : ''}`}>
+              <label
+                className="wp-user-modal__avatar-preview"
+                htmlFor="add-user-avatar-input"
+                title={avatarFile ? 'Click to change photo' : 'Click to upload photo'}
+              >
+                {avatarPreview ? (
+                  <img src={avatarPreview} alt="" />
+                ) : (
+                  <span className="wp-user-modal__avatar-empty">
+                    <FiUser size={42} aria-hidden />
+                    <span>No photo</span>
+                  </span>
+                )}
+                <span className="wp-user-modal__avatar-overlay">
+                  <FiCamera size={18} aria-hidden />
                   {avatarFile ? 'Change photo' : 'Upload photo'}
-                </label>
-                <input
-                  id="add-user-avatar-input"
-                  ref={avatarInputRef}
-                  type="file"
-                  accept={AVATAR_ACCEPT}
-                  hidden
-                  disabled={saving}
-                  onChange={onAvatarPicked}
-                />
-                {avatarFile ? (
-                  <button
-                    type="button"
-                    className="wp-flat__btn wp-flat__btn--danger wp-flat__btn--sm"
-                    onClick={resetAvatarPicker}
-                    disabled={saving}
-                  >
-                    Remove
-                  </button>
-                ) : null}
-                <span className="wp-user-modal__avatar-hint">JPG, PNG, or WEBP. Max 2MB. Optional.</span>
+                </span>
+              </label>
+              <input
+                id="add-user-avatar-input"
+                ref={avatarInputRef}
+                type="file"
+                accept={AVATAR_ACCEPT}
+                hidden
+                disabled={saving}
+                onChange={onAvatarPicked}
+              />
+              <div className="wp-user-modal__avatar-actions">
+                <p className="wp-user-modal__avatar-title">Photo</p>
+                <p className="wp-user-modal__avatar-hint">
+                  JPG, PNG, or WEBP · Up to {AVATAR_MAX_LABEL} · Optional
+                </p>
+                <div className="wp-user-modal__avatar-btns">
+                  <label className="wp-flat__btn wp-flat__btn--secondary wp-flat__btn--sm" htmlFor="add-user-avatar-input">
+                    <FiCamera size={13} />
+                    {avatarFile ? 'Change photo' : 'Upload photo'}
+                  </label>
+                  {avatarFile ? (
+                    <button
+                      type="button"
+                      className="wp-flat__btn wp-flat__btn--danger wp-flat__btn--sm"
+                      onClick={resetAvatarPicker}
+                      disabled={saving}
+                    >
+                      Remove
+                    </button>
+                  ) : null}
+                </div>
                 {fieldError('avatar') ? <small className="wp-user-modal__error">{fieldError('avatar')}</small> : null}
               </div>
             </div>
