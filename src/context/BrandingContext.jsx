@@ -19,6 +19,8 @@ export function BrandingProvider({ children }) {
     applyDocumentBranding(next)
   }, [])
 
+
+  
   const refreshBranding = useCallback(async () => {
     try {
       const { data } = await api.get('/branding')
