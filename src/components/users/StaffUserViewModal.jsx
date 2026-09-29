@@ -4,9 +4,9 @@ import { FiX } from 'react-icons/fi'
 import { toast } from 'react-toastify'
 import api from '../../api/client'
 import WestPrimeLoader from '../common/WestPrimeLoader'
+import Avatar from '../common/Avatar'
 import ClassSectionStudentsModal from '../class-sections/ClassSectionStudentsModal'
 import { apiErrorMessage } from '../../utils/apiError'
-import { initialsOf } from '../../utils/avatar'
 import '../students/StudentRecordModal.css'
 import '../../pages/StudentsManagePage.css'
 import '../admissions/AdmissionViewModal.css'
@@ -156,11 +156,7 @@ export default function StaffUserViewModal({ userId, onClose, baseUrl = '/users'
         <header className="wp-srm__header wp-svm__header">
           <div className="wp-svm__identity">
             <div className="wp-svm__avatar" aria-hidden={!user}>
-              {user?.avatar_url ? (
-                <img src={user.avatar_url} alt="" />
-              ) : (
-                <span>{initialsOf(user?.name)}</span>
-              )}
+              <Avatar src={user?.avatar_url} name={user?.name} />
             </div>
             <div className="wp-svm__identity-text">
               <p className="wp-svm__eyebrow">User record</p>

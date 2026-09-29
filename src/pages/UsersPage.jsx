@@ -3,13 +3,13 @@ import { FiPlus, FiRefreshCw } from 'react-icons/fi'
 import { toast } from 'react-toastify'
 import Swal from 'sweetalert2'
 import FlatPager from '../components/common/FlatPager'
+import Avatar from '../components/common/Avatar'
 import AddUserModal from '../components/users/AddUserModal'
 import StudentRecordModal from '../components/students/StudentRecordModal'
 import StaffUserViewModal from '../components/users/StaffUserViewModal'
 import { useAuth } from '../context/AuthContext'
 import api from '../api/client'
 import { apiErrorMessage } from '../utils/apiError'
-import { initialsOf } from '../utils/avatar'
 import { wpConfirm } from '../utils/wpSwal'
 import './StudentsManagePage.css'
 import './UsersPage.css'
@@ -347,11 +347,7 @@ export default function UsersPage() {
                     aria-label={`Change photo for ${u.name}`}
                   >
                     <div className="wp-users__card-avatar">
-                      {u.avatar_url ? (
-                        <img src={u.avatar_url} alt="" />
-                      ) : (
-                        <span>{initialsOf(u.name)}</span>
-                      )}
+                      <Avatar src={u.avatar_url} name={u.name} />
                       {busy ? <span className="wp-users__card-avatar-busy" aria-hidden /> : null}
                     </div>
                     <input

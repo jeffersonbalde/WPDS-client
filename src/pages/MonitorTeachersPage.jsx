@@ -3,10 +3,10 @@ import { FiRefreshCw, FiDownload } from 'react-icons/fi'
 import { toast } from 'react-toastify'
 import api from '../api/client'
 import FlatPager from '../components/common/FlatPager'
+import Avatar from '../components/common/Avatar'
 import StaffUserViewModal from '../components/users/StaffUserViewModal'
 import { apiErrorMessage } from '../utils/apiError'
 import { downloadExcelExport, excelExportError } from '../utils/excelExport'
-import { initialsOf } from '../utils/avatar'
 import './StudentsManagePage.css'
 import './UsersPage.css'
 
@@ -216,11 +216,7 @@ export default function MonitorTeachersPage() {
                 <article key={t.id} className="wp-users__card wp-users__card--teacher">
                   <div className="wp-users__card-avatar-wrap">
                     <div className="wp-users__card-avatar">
-                      {t.avatar_url ? (
-                        <img src={t.avatar_url} alt="" />
-                      ) : (
-                        <span>{initialsOf(t.name)}</span>
-                      )}
+                      <Avatar src={t.avatar_url} name={t.name} />
                     </div>
                   </div>
 

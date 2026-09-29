@@ -6,17 +6,11 @@ import { useAuth } from '../context/AuthContext'
 import { NotificationsProvider } from '../context/NotificationsContext'
 import NotificationBell from '../components/notifications/NotificationBell'
 import NotifNavBadge from '../components/notifications/NotifNavBadge'
+import Avatar from '../components/common/Avatar'
 import { getNavForRole, isChildActive, isGroupActive, isNavGroup } from './nav'
 import { wpAlert, wpClose, wpConfirm, wpLoading } from '../utils/wpSwal'
 import logo from '../assets/west_prime_logo.png'
 import './dashboard.css'
-
-function initials(name = '') {
-  const parts = String(name).trim().split(/\s+/).filter(Boolean)
-  if (!parts.length) return 'U'
-  if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase()
-  return `${parts[0][0]}${parts[1][0]}`.toUpperCase()
-}
 
 function groupKey(sectionHeading, item) {
   return `${sectionHeading}::${item.label}`
@@ -245,11 +239,7 @@ export default function DashboardLayout() {
                 onClick={() => setMenuOpen((v) => !v)}
               >
                 <span className="wp-dash__avatar">
-                  {user?.avatar_url ? (
-                    <img src={user.avatar_url} alt="" className="wp-dash__avatar-img" />
-                  ) : (
-                    initials(user?.name)
-                  )}
+                  <Avatar src={user?.avatar_url} name={user?.name} className="wp-dash__avatar-img" />
                 </span>
                 <span className="wp-dash__user-name" title={user?.name || 'User'}>
                   {user?.name || 'User'}

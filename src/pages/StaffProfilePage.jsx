@@ -1,6 +1,6 @@
 import { useMemo } from 'react'
 import { useAuth } from '../context/AuthContext'
-import { initialsOf } from '../utils/avatar'
+import Avatar from '../components/common/Avatar'
 import '../components/admissions/AdmissionViewModal.css'
 import './StaffProfilePage.css'
 
@@ -62,11 +62,7 @@ export default function StaffProfilePage() {
       <div className="wp-flat__panel">
         <div className="wp-sprofile__header">
           <div className="wp-sprofile__avatar">
-            {user.avatar_url ? (
-              <img src={user.avatar_url} alt="" />
-            ) : (
-              <span>{initialsOf(user.name)}</span>
-            )}
+            <Avatar src={user.avatar_url} name={user.name} />
           </div>
           <div>
             <h2 className="wp-sprofile__name">{user.name}</h2>
