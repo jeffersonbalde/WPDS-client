@@ -40,6 +40,18 @@
   background: #f8f9fa;
 }
 
+/* The form wraps body + footer; it must be a constrained flex column so the body scrolls. */
+.wp-user-modal__form {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+.wp-srm.wp-user-modal .wp-srm__body {
+  overscroll-behavior: contain;
+}
+
 .wp-user-modal__loading {
   display: flex;
   align-items: center;

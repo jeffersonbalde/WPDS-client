@@ -5,7 +5,9 @@ import api from '../../api/client'
 import FlatSearchSelect from '../common/FlatSearchSelect'
 import { apiErrorMessage } from '../../utils/apiError'
 import {
+  NO_GRADE,
   gradeValidationMessage,
+  isNoGrade,
   isValidPeriodGrade,
   normalizeAcademicLevel,
   sanitizeGradeInput,
@@ -222,7 +224,7 @@ export default function GradeChangeRequestModal({ classes = [], onClose, onSaved
       await api.post('/grade-change-requests', {
         grade_id: Number(form.grade_id),
         period_field: form.period_field,
-        new_value: Number(form.new_value),
+        new_value: isNoGrade(form.new_value) ? NO_GRADE : Number(form.new_value),
         reason: String(form.reason).trim(),
       })
       toast.success('Change request submitted for registrar approval.')
@@ -264,7 +266,7 @@ export default function GradeChangeRequestModal({ classes = [], onClose, onSaved
         <form className="wp-gcr-modal__form" onSubmit={submit} noValidate>
           <div className="wp-srm__body">
             <p className="wp-gcr-modal__note">
-              Locked grades cannot be edited directly. Submit a request for registrar review.
+              Released grades cannot be edited directly. Submit a request for registrar review — use it to replace an NG (No Grade) with a numeric grade, or to correct a released grade.
             </p>
 
             <div className="wp-gcr-modal__grid">
@@ -333,7 +335,7 @@ export default function GradeChangeRequestModal({ classes = [], onClose, onSaved
                 <span>New Value</span>
                 <input
                   type="text"
-                  inputMode="decimal"
+                  inputMode="text"
                   autoComplete="off"
                   className={(fieldError('new_value') || newValueInvalid) ? 'is-invalid' : ''}
                   value={form.new_value}
@@ -345,14 +347,14 @@ export default function GradeChangeRequestModal({ classes = [], onClose, onSaved
                       'ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'Home', 'End',
                     ]
                     if (allowed.includes(e.key)) return
-                    if (e.key.length === 1 && !/[0-9.]/.test(e.key)) e.preventDefault()
+                    if (e.key.length === 1 && !/[0-9.nNgG]/.test(e.key)) e.preventDefault()
                   }}
                   onPaste={(e) => {
                     e.preventDefault()
                     setField('new_value', sanitizeGradeInput(e.clipboardData.getData('text')))
                   }}
                   disabled={saving}
-                  placeholder={gradeLevel === 'shs' ? '0–100' : '1.00–5.00'}
+                  placeholder={`${gradeLevel === 'shs' ? '0–100' : '1.00–5.00'} or NG`}
                   title={gradeValidationMessage(gradeLevel)}
                   required
                 />

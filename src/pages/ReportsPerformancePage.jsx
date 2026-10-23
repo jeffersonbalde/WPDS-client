@@ -28,7 +28,7 @@ const PERFORMANCE_STUDENT_COLUMNS = [
   { key: 'name', label: 'Name' },
   { key: 'program_code', label: 'Program' },
   { key: 'subject_code', label: 'Subject' },
-  { key: 'final_grade', label: 'Final Grade', render: (value) => fmtAvg(value) },
+  { key: 'final_grade', label: 'Final Grade', render: (value, row) => (row?.final_grade_ng ? 'NG' : fmtAvg(value)) },
   { key: 'remarks', label: 'Remarks' },
 ]
 
@@ -315,7 +315,7 @@ export default function ReportsPerformancePage() {
                   atRisk.map((r, i) => (
                     <tr key={i}>
                       <td>{r.student_no || '—'}</td><td>{r.name || '—'}</td>
-                      <td>{r.subject_code || '—'}</td><td>{fmtAvg(r.final_grade)}</td>
+                      <td>{r.subject_code || '—'}</td><td>{r.final_grade_ng ? 'NG' : fmtAvg(r.final_grade)}</td>
                     </tr>
                   ))
                 )}

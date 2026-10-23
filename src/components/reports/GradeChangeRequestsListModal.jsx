@@ -7,6 +7,7 @@ import FlatPager from '../common/FlatPager'
 import WestPrimeLoader from '../common/WestPrimeLoader'
 import GradeChangeReviewModal from '../grade-submissions/GradeChangeReviewModal'
 import { apiErrorMessage } from '../../utils/apiError'
+import { formatGradeCell } from '../../utils/gradeInput'
 import '../students/StudentRecordModal.css'
 import '../../pages/StudentsManagePage.css'
 import './StudentListModal.css'
@@ -28,10 +29,8 @@ const PERIOD_LABEL = {
   final: 'Final',
 }
 
-function fmtGrade(value) {
-  if (value === null || value === undefined || value === '') return '—'
-  const n = Number(value)
-  return Number.isFinite(n) ? n.toFixed(2) : String(value)
+function fmtGrade(value, isNg = false) {
+  return formatGradeCell(value, isNg)
 }
 
 function studentName(sp) {
@@ -213,8 +212,8 @@ export default function GradeChangeRequestsListModal({ title, contextLine, baseP
                               <td>{studentName(sp)}</td>
                               <td>{subjectCode || '—'}</td>
                               <td>{PERIOD_LABEL[r.period_field] || r.period_field}</td>
-                              <td>{fmtGrade(r.old_value)}</td>
-                              <td>{fmtGrade(r.new_value)}</td>
+                              <td>{fmtGrade(r.old_value, r.old_is_ng)}</td>
+                              <td>{fmtGrade(r.new_value, r.new_is_ng)}</td>
                               <td><span className="wp-flat__status">{String(r.status || '—').toUpperCase()}</span></td>
                             </tr>
                           )

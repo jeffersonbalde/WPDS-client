@@ -5,6 +5,7 @@ import api from '../api/client'
 import PageLoadingRow from '../components/common/PageLoadingRow'
 import GradeChangeRequestModal from '../components/grade-submissions/GradeChangeRequestModal'
 import { apiErrorMessage } from '../utils/apiError'
+import { formatGradeCell } from '../utils/gradeInput'
 import './StudentsManagePage.css'
 
 function periodLabel(value) {
@@ -99,8 +100,8 @@ export default function GradeChangesPage() {
                       <td>{studentName || '—'}</td>
                       <td>{r.grade?.enrollment_subject?.class_section?.subject?.code || '—'}</td>
                       <td>{periodLabel(r.period_field)}</td>
-                      <td>{r.old_value ?? '—'}</td>
-                      <td>{r.new_value ?? '—'}</td>
+                      <td>{formatGradeCell(r.old_value, r.old_is_ng)}</td>
+                      <td>{formatGradeCell(r.new_value, r.new_is_ng)}</td>
                       <td>
                         <span className="wp-flat__status">{String(r.status || '—').toUpperCase()}</span>
                       </td>

@@ -122,7 +122,7 @@ const router = createBrowserRouter([
       { path: 'terms', element: <Protected roles={['registrar']}><LazyRoute><TermsPage /></LazyRoute></Protected> },
       { path: 'grade-submissions-review', element: <Protected roles={['registrar']}><LazyRoute><GradeSubmissionsReviewPage /></LazyRoute></Protected> },
       { path: 'grade-approvals', element: <Protected roles={['registrar']}><LazyRoute><GradeApprovalsPage /></LazyRoute></Protected> },
-      { path: 'announcements', element: <Protected roles={['registrar']}><LazyRoute><AnnouncementsPage /></LazyRoute></Protected> },
+      { path: 'announcements', element: <Protected roles={['it', 'stakeholder']}><LazyRoute><AnnouncementsPage /></LazyRoute></Protected> },
 
       { path: 'users', element: <Protected roles={['it']}><LazyRoute><UsersPage /></LazyRoute></Protected> },
       { path: 'branding', element: <Protected roles={['it']}><LazyRoute><BrandingPage /></LazyRoute></Protected> },

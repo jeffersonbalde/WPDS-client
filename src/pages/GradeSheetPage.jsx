@@ -6,8 +6,11 @@ import api from '../api/client'
 import WestPrimeLoader from '../components/common/WestPrimeLoader'
 import { apiErrorMessage } from '../utils/apiError'
 import {
+  NO_GRADE,
+  formatGradeCell,
   gradeRangeHint,
   gradeValidationMessage,
+  isNoGrade,
   isValidPeriodGrade,
   normalizeAcademicLevel,
   sanitizeGradeInput,
@@ -22,6 +25,16 @@ const PERIODS = [
   { key: 'semi_final', label: 'Semi-Final' },
   { key: 'final', label: 'Final' },
 ]
+
+function periodInputValue(grade, period) {
+  if (grade?.[`${period}_ng`]) return NO_GRADE
+  return grade?.[period] ?? ''
+}
+
+function periodPayloadValue(value) {
+  if (value === '' || value === null || value === undefined) return null
+  return isNoGrade(value) ? NO_GRADE : Number(value)
+}
 
 const STATUS_META = {
   draft: { label: 'Draft', cls: 'is-draft' },
@@ -45,11 +58,12 @@ export default function GradeSheetPage() {
     ;(data.enrollment_subjects || []).forEach((e) => {
       map[e.id] = {
         enrollment_subject_id: e.id,
-        prelim: e.grade?.prelim ?? '',
-        midterm: e.grade?.midterm ?? '',
-        semi_final: e.grade?.semi_final ?? '',
-        final: e.grade?.final ?? '',
+        prelim: periodInputValue(e.grade, 'prelim'),
+        midterm: periodInputValue(e.grade, 'midterm'),
+        semi_final: periodInputValue(e.grade, 'semi_final'),
+        final: periodInputValue(e.grade, 'final'),
         final_grade: e.grade?.final_grade,
+        final_grade_ng: Boolean(e.grade?.final_grade_ng),
         remarks: e.grade?.remarks,
       }
     })
@@ -128,10 +142,10 @@ export default function GradeSheetPage() {
     const payload = {
       grades: Object.values(grades).map((g) => ({
         enrollment_subject_id: g.enrollment_subject_id,
-        prelim: g.prelim === '' ? null : Number(g.prelim),
-        midterm: g.midterm === '' ? null : Number(g.midterm),
-        semi_final: g.semi_final === '' ? null : Number(g.semi_final),
-        final: g.final === '' ? null : Number(g.final),
+        prelim: periodPayloadValue(g.prelim),
+        midterm: periodPayloadValue(g.midterm),
+        semi_final: periodPayloadValue(g.semi_final),
+        final: periodPayloadValue(g.final),
       })),
     }
     await api.post(`/class-sections/${id}/grades`, payload)
@@ -303,8 +317,9 @@ export default function GradeSheetPage() {
                           <td key={p.key}>
                             <input
                               type="text"
-                              inputMode="decimal"
+                              inputMode="text"
                               autoComplete="off"
+                              placeholder={level === 'shs' ? '0–100' : '1.00–5.00'}
                               className={`form-control wp-gradesheet__input${invalid ? ' is-invalid' : ''}`}
                               disabled={isPeriodLocked(p.key) || saving}
                               value={value}
@@ -318,7 +333,7 @@ export default function GradeSheetPage() {
                                   'ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'Home', 'End',
                                 ]
                                 if (allowed.includes(ev.key)) return
-                                if (ev.key.length === 1 && !/[0-9.]/.test(ev.key)) {
+                                if (ev.key.length === 1 && !/[0-9.nNgG]/.test(ev.key)) {
                                   ev.preventDefault()
                                 }
                               }}
@@ -331,7 +346,7 @@ export default function GradeSheetPage() {
                           </td>
                         )
                       })}
-                      <td>{g.final_grade != null ? Number(g.final_grade).toFixed(2) : '—'}</td>
+                      <td>{formatGradeCell(g.final_grade, g.final_grade_ng)}</td>
                       <td>{g.remarks || '—'}</td>
                     </tr>
                   )
@@ -342,8 +357,9 @@ export default function GradeSheetPage() {
         </div>
         <div className="wp-flat__footer">
           <span className="wp-flat__footer-meta">
-            Numbers only — College {gradeRangeHint('college')}, SHS {gradeRangeHint('shs')}.
-            Final Grade = (Prelim + Midterm + Semi-Final + Final) ÷ 4. Students see grades only after registrar release.
+            Numbers only — College {gradeRangeHint('college')}, SHS {gradeRangeHint('shs')} — or type NG for No Grade.
+            Final Grade = (Prelim + Midterm + Semi-Final + Final) ÷ 4. An NG in any period makes the Final Grade NG and the Remarks FAILED.
+            Students see grades only after registrar release.
           </span>
         </div>
       </div>

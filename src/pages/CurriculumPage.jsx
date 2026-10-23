@@ -209,7 +209,7 @@ export default function CurriculumPage() {
                       <td className="wp-curr__taken">{taken?.term_name || '—'}</td>
                       <td className="wp-curr__taken">{taken?.program_code || '—'}</td>
                       <td className="wp-curr__taken">{taken?.year_level ?? '—'}</td>
-                      <td className="wp-curr__grade">{taken?.final_grade ?? '—'}</td>
+                      <td className="wp-curr__grade">{taken?.final_grade_ng ? 'NG' : (taken?.final_grade ?? '—')}</td>
                       <td>
                         {taken?.remarks ? (
                           <span className={`wp-curr__pill wp-curr__pill--${remarkTone(taken.remarks)}`}>

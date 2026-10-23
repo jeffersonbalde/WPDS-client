@@ -3,6 +3,7 @@ import { FiX } from 'react-icons/fi'
 import { toast } from 'react-toastify'
 import api from '../../api/client'
 import { apiErrorMessage } from '../../utils/apiError'
+import { formatGradeCell } from '../../utils/gradeInput'
 import { wpConfirm } from '../../utils/wpSwal'
 import '../students/StudentRecordModal.css'
 import './SubmissionReviewModal.css'
@@ -17,10 +18,8 @@ const PERIOD_LABEL = {
   final: 'Final',
 }
 
-function fmtGrade(value) {
-  if (value === null || value === undefined || value === '') return '—'
-  const n = Number(value)
-  return Number.isFinite(n) ? n.toFixed(2) : String(value)
+function fmtGrade(value, isNg = false) {
+  return formatGradeCell(value, isNg)
 }
 
 function studentName(sp) {
@@ -92,7 +91,7 @@ export default function GradeChangeReviewModal({ request, onClose, onReviewed, r
       title: status === 'approved' ? 'Approve grade change?' : 'Reject grade change?',
       text:
         status === 'approved'
-          ? `The ${PERIOD_LABEL[request.period_field] || request.period_field} grade will be updated to ${fmtGrade(request.new_value)} and the final grade recomputed.`
+          ? `The ${PERIOD_LABEL[request.period_field] || request.period_field} grade will be updated to ${fmtGrade(request.new_value, request.new_is_ng)} and the final grade recomputed.`
           : 'The request will be rejected and the grade left unchanged.',
       confirmText: status === 'approved' ? 'Approve' : 'Reject',
       danger: status === 'rejected',
@@ -145,8 +144,8 @@ export default function GradeChangeReviewModal({ request, onClose, onReviewed, r
             <div><span>Student</span>{studentName(sp)}</div>
             <div><span>Subject</span>{subject?.code || '—'}</div>
             <div><span>Period</span>{PERIOD_LABEL[request?.period_field] || request?.period_field}</div>
-            <div><span>Old value</span>{fmtGrade(request?.old_value)}</div>
-            <div><span>New value</span>{fmtGrade(request?.new_value)}</div>
+            <div><span>Old value</span>{fmtGrade(request?.old_value, request?.old_is_ng)}</div>
+            <div><span>New value</span>{fmtGrade(request?.new_value, request?.new_is_ng)}</div>
           </div>
 
           <p className="wp-sub-review__prev-remark">

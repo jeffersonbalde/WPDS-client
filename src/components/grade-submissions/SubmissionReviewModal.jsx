@@ -4,6 +4,7 @@ import { toast } from 'react-toastify'
 import api from '../../api/client'
 import WestPrimeLoader from '../common/WestPrimeLoader'
 import { apiErrorMessage } from '../../utils/apiError'
+import { formatGradeCell } from '../../utils/gradeInput'
 import { wpConfirm } from '../../utils/wpSwal'
 import '../students/StudentRecordModal.css'
 import '../../pages/StudentsManagePage.css'
@@ -12,10 +13,8 @@ import { useBodyScrollLock } from '../../hooks/useBodyScrollLock'
 
 const ANIM_MS = 220
 
-function fmtGrade(value) {
-  if (value === null || value === undefined || value === '') return '—'
-  const n = Number(value)
-  return Number.isFinite(n) ? n.toFixed(2) : String(value)
+function fmtGrade(value, isNg = false) {
+  return formatGradeCell(value, isNg)
 }
 
 function lineValue(primary, secondary) {
@@ -206,7 +205,7 @@ export default function SubmissionReviewModal({ submissionId, onClose, onReviewe
                             <td className="wp-flat__num">{idx + 1}</td>
                             <td>{row.student_no || '—'}</td>
                             <td>{row.name || '—'}</td>
-                            <td>{fmtGrade(row.value)}</td>
+                            <td>{fmtGrade(row.value, row.is_ng)}</td>
                           </tr>
                         ))
                       )}

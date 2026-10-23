@@ -120,17 +120,17 @@ const byRole = {
         { to: '/grade-approvals', label: 'Grade Change Approvals', icon: FiCheckSquare },
       ],
     },
-    {
-      heading: 'Communication',
-      items: [
-        { to: '/announcements', label: 'Announcements', icon: FiBell },
-      ],
-    },
   ],
   it: [
     {
       heading: 'Main',
       items: [{ to: '/', label: 'Dashboard', end: true, icon: FiHome }],
+    },
+    {
+      heading: 'Communication',
+      items: [
+        { to: '/announcements', label: 'Announcements', icon: FiBell },
+      ],
     },
     {
       heading: 'System',
@@ -182,6 +182,12 @@ const byRole = {
       items: [
         { to: '/', label: 'Dashboard', end: true, icon: FiHome },
         { to: '/my-profile', label: 'My Profile', icon: FiUser },
+      ],
+    },
+    {
+      heading: 'Communication',
+      items: [
+        { to: '/announcements', label: 'Announcements', icon: FiBell },
       ],
     },
     {

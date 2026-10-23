@@ -4,6 +4,7 @@ import { toast } from 'react-toastify'
 import api from '../../api/client'
 import WestPrimeLoader from '../common/WestPrimeLoader'
 import { apiErrorMessage } from '../../utils/apiError'
+import { formatGradeCell } from '../../utils/gradeInput'
 import { majorLabel } from '../../utils/program'
 import '../students/StudentRecordModal.css'
 import '../../pages/StudentsManagePage.css'
@@ -23,12 +24,6 @@ function lineValue(primary, secondary) {
   const right = String(secondary || '').trim()
   if (left && right) return `${left} · ${right}`
   return left || right || '—'
-}
-
-function fmtGrade(value) {
-  if (value === null || value === undefined || value === '') return '—'
-  const n = Number(value)
-  return Number.isFinite(n) ? n.toFixed(2) : '—'
 }
 
 function studentName(profile) {
@@ -228,11 +223,11 @@ export default function AdmissionViewModal({ admissionId, onClose }) {
                                 <td>{section.schedule_day || '—'}</td>
                                 <td>{section.room || '—'}</td>
                                 <td>{section.teacher?.name || '—'}</td>
-                                <td>{fmtGrade(grade.prelim)}</td>
-                                <td>{fmtGrade(grade.midterm)}</td>
-                                <td>{fmtGrade(grade.semi_final)}</td>
-                                <td>{fmtGrade(grade.final)}</td>
-                                <td>{fmtGrade(grade.final_grade)}</td>
+                                <td>{formatGradeCell(grade.prelim, grade.prelim_ng)}</td>
+                                <td>{formatGradeCell(grade.midterm, grade.midterm_ng)}</td>
+                                <td>{formatGradeCell(grade.semi_final, grade.semi_final_ng)}</td>
+                                <td>{formatGradeCell(grade.final, grade.final_ng)}</td>
+                                <td>{formatGradeCell(grade.final_grade, grade.final_grade_ng)}</td>
                                 <td>
                                   <span className="wp-flat__status">{grade.remarks || '—'}</span>
                                 </td>
