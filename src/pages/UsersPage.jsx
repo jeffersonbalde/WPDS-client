@@ -146,6 +146,31 @@ export default function UsersPage() {
     }
   }
 
+  async function deleteUser(user) {
+    if (currentUser?.id === user.id) {
+      toast.info('You cannot delete your own account.')
+      return
+    }
+
+    const ok = await wpConfirm({
+      icon: 'warning',
+      title: 'Delete user?',
+      text: `${user.name} (${user.email}) will be permanently deleted. This cannot be undone.`,
+      confirmText: 'Delete',
+      cancelText: 'Cancel',
+      danger: true,
+    })
+    if (!ok) return
+
+    try {
+      await api.delete(`/users/${user.id}`)
+      toast.success('User deleted.')
+      await load()
+    } catch (err) {
+      toast.error(apiErrorMessage(err, 'Failed to delete user.'))
+    }
+  }
+
   function viewUser(user) {
     if (user.role === 'student') {
       const studentId = user.student_profile?.id
@@ -394,6 +419,15 @@ export default function UsersPage() {
                       onClick={() => resetPassword(u)}
                     >
                       Reset password
+                    </button>
+                    <button
+                      type="button"
+                      className="wp-flat__btn wp-flat__btn--danger wp-flat__btn--sm"
+                      onClick={() => deleteUser(u)}
+                      disabled={currentUser?.id === u.id}
+                      title={currentUser?.id === u.id ? 'Cannot delete your own account' : undefined}
+                    >
+                      Delete
                     </button>
                   </div>
                 </article>
