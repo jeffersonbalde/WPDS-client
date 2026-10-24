@@ -272,7 +272,9 @@ export default function DashboardLayout() {
         </header>
 
         <main className="wp-dash__main">
-          <Outlet />
+          <div key={location.pathname} className="wp-dash__page">
+            <Outlet />
+          </div>
         </main>
 
         <footer className="wp-dash__footer">

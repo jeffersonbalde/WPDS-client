@@ -481,6 +481,59 @@
   padding: 1.25rem 1.5rem 2rem;
 }
 
+/* Smooth page + tab transitions. "backwards" fill keeps no transform once finished,
+   so position:fixed modals inside pages are never trapped by a transformed ancestor. */
+@keyframes wp-page-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes wp-tab-in {
+  from {
+    opacity: 0;
+    transform: translateY(5px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.wp-dash__page {
+  animation: wp-page-in 0.3s cubic-bezier(0.22, 1, 0.36, 1) backwards;
+}
+
+.wp-system__section,
+.wp-profile__grid,
+.wp-profile__parents,
+.wp-adm-create__grid,
+.wp-adm-create__subjects,
+.wp-create__grid {
+  animation: wp-tab-in 0.24s ease-out backwards;
+}
+
+.wp-system__tab {
+  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wp-dash__page,
+  .wp-system__section,
+  .wp-profile__grid,
+  .wp-profile__parents,
+  .wp-adm-create__grid,
+  .wp-adm-create__subjects,
+  .wp-create__grid {
+    animation: none;
+  }
+}
+
 .wp-dash__footer {
   margin-top: auto;
   background: var(--footer-bg);
